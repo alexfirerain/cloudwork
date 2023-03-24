@@ -1,26 +1,29 @@
 package ru.netology.cloudwork.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.netology.cloudwork.dto.LoginDto;
 import ru.netology.cloudwork.dto.UserDto;
+import ru.netology.cloudwork.service.UserService;
 
+/**
+ * A controller for user login and logout.
+ */
 @RestController
 public class EntranceController {
+
+
+    private UserService userService;
+
     @PostMapping("/login")
     public ResponseEntity<LoginDto> login(@RequestBody UserDto userDto) {
 
-        String token = userService.generateToken(userDto);
-
-        return ResponseEntity.ok(new LoginDto(token));
+        return ResponseEntity.ok(userService.initializeSession(userDto));
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Object> logout(String token) {
-        userService.stopSession(token);
+    public ResponseEntity<Object> logout(@RequestParam("auth-token") String token) {
+        userService.terminateSession(token);
         return ResponseEntity.ok().build();
     }
 

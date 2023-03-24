@@ -1,4 +1,10 @@
 package ru.netology.cloudwork.dto;
 
-public class ErrorDto {
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
+public record ErrorDto(String message, int id) {
+
 }
