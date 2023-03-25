@@ -21,14 +21,14 @@ public class UserService {
      */
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
 
-    public LoginDto initializeSession(UserDto userDto) {
-        String usernameRequested = userDto.getUsername();
+    public LoginDto initializeSession(UserDto loginRequest) {
+        String usernameRequested = loginRequest.getUsername();
         UserEntity user = userRepository.findByUsername(usernameRequested);
 
         if (user == null)
             throw new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
 
-        if (!user.getPassword().equals(userDto.getPassword()))
+        if (!user.getPassword().equals(loginRequest.getPassword()))
             throw new BadCredentialsException("Неверный пароль.");
 
         String token = sessions.entrySet().stream()
