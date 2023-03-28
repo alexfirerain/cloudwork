@@ -2,6 +2,7 @@ package ru.netology.cloudwork.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,6 +21,20 @@ public class ErrorController {
         return new ResponseEntity<>(
                 new ErrorDto(exception.getLocalizedMessage(), idCount.getAndIncrement()),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorDto> handleAuthorizationFailure(RuntimeException exception) {
+        return new ResponseEntity<>(
+                new ErrorDto(exception.getLocalizedMessage(), idCount.getAndIncrement()),
+                HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDto> handleServerError(RuntimeException exception) {
+        return new ResponseEntity<>(
+                new ErrorDto(exception.getLocalizedMessage(), idCount.getAndIncrement()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

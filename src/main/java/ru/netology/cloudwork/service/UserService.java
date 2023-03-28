@@ -1,6 +1,8 @@
 package ru.netology.cloudwork.service;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.netology.cloudwork.dto.LoginDto;
@@ -16,15 +18,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * A manager for user tokens and sessions.
  */
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
+    public UserService(IdentityService identityService, UserRepository userRepository) {
+        this.identityService = identityService;
+        this.userRepository = userRepository;
+    }
 
     /**
      * Mappings between token and username.
      */
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
-    private IdentityService identityService;
-    private UserRepository userRepository;
+    private final IdentityService identityService;
+    private final UserRepository userRepository;
 
     public LoginDto initializeSession(UserDto loginRequest) {
         String usernameRequested = loginRequest.getUsername();
@@ -54,5 +60,22 @@ public class UserService {
     public void terminateSession(String token) {
 
         sessions.remove(token);
+    }
+
+    /**
+     * Locates the user based on the username. In the actual implementation, the search
+     * may possibly be case-sensitive, or case-insensitive depending on how the
+     * implementation instance is configured. In this case, the <code>UserDetails</code>
+     * object that comes back may have a username that is of a different case than what
+     * was actually requested..
+     *
+     * @param username the username identifying the user whose data is required.
+     * @return a fully populated user record (never <code>null</code>)
+     * @throws UsernameNotFoundException if the user could not be found or the user has no
+     *                                   GrantedAuthority
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }
