@@ -18,7 +18,8 @@ public class EntranceController {
     @PostMapping("/login")
     public ResponseEntity<LoginDto> login(@RequestBody UserDto userDto) {
 
-        return ResponseEntity.ok(userService.initializeSession(userDto));
+//        return ResponseEntity.ok(userService.initializeSession(userDto));
+        return ResponseEntity.ok(new LoginDto("пизда"));
     }
 
     @GetMapping("/logout")
