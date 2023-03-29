@@ -7,7 +7,7 @@ import lombok.Data;
  * A transfer object for bringing the generated auth-token from server to client.
  */
 @Data
-public final class LoginDto {
+public class LoginDto {
     @JsonProperty("auth-token")
     private final String token;
 

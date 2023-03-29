@@ -10,6 +10,7 @@ import ru.netology.cloudwork.service.UserService;
  * A controller for user login and logout.
  */
 @RestController
+@CrossOrigin(origins = "http://localhost:8080")
 public class EntranceController {
 
 
