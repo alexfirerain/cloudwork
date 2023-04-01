@@ -1,13 +1,20 @@
 package ru.netology.cloudwork.service;
 
+import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Service;
-import ru.netology.cloudwork.dto.LoginDto;
-import ru.netology.cloudwork.dto.UserDto;
+import ru.netology.cloudwork.dto.LoginResponse;
+import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.entity.UserEntity;
+import ru.netology.cloudwork.model.UserInfo;
 import ru.netology.cloudwork.repository.UserRepository;
 
 import java.util.Map;
@@ -23,7 +30,6 @@ public class UserService implements UserDetailsService {
     public UserService(IdentityService identityService, UserRepository userRepository) {
         this.identityService = identityService;
         this.userRepository = userRepository;
-        this.createUser();
     }
 
     /**
@@ -32,15 +38,14 @@ public class UserService implements UserDetailsService {
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
     private final IdentityService identityService;
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public LoginDto initializeSession(UserDto loginRequest) {
+
+    public LoginResponse initializeSession(LoginRequest loginRequest) {
         String usernameRequested = loginRequest.getUsername();
-        Optional<UserEntity> user = userRepository.findByUsername(usernameRequested);
+        UserInfo user = (UserInfo) loadUserByUsername(usernameRequested);
 
-        if (user.isEmpty())
-            throw new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
-
-        if (!user.get().getPassword().equals(loginRequest.getPassword()))
+        if (!encoder.matches(loginRequest.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Неверный пароль.");
 
         String token = sessions.entrySet().stream()
@@ -54,9 +59,15 @@ public class UserService implements UserDetailsService {
             sessions.put(token, usernameRequested);
         }
 
-        return new LoginDto(token);
+        return new LoginResponse(token);
     }
 
+    public String defineUsernameByToken(String token) {
+        String username = sessions.get(token);
+        if (username == null)
+            throw new AuthenticationCredentialsNotFoundException("Сессия окончена.");
+        return username;
+    }
 
     public void terminateSession(String token) {
 
@@ -78,8 +89,8 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> entity = userRepository.findByUsername(username);
-        if (entity.isEmpty())
-            throw new UsernameNotFoundException("Юзернейм не найден");
-        return entity.get();
+        entity.orElseThrow(
+                () -> new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
+        return entity.map(UserInfo::new).get();
     }
 }

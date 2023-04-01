@@ -2,25 +2,24 @@ package ru.netology.cloudwork.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.netology.cloudwork.dto.LoginDto;
-import ru.netology.cloudwork.dto.UserDto;
+import ru.netology.cloudwork.dto.LoginResponse;
+import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.service.UserService;
 
 /**
  * A controller for user login and logout.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
+//@CrossOrigin(origins = "http://localhost:8080")
 public class EntranceController {
-
 
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginDto> login(@RequestBody UserDto userDto) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
 
-//        return ResponseEntity.ok(userService.initializeSession(userDto));
-        return ResponseEntity.ok(new LoginDto("пизда"));
+        return ResponseEntity.ok(userService.initializeSession(loginRequest));
+//        return ResponseEntity.ok(new LoginResponse("пизда"));
     }
 
     @GetMapping("/logout")

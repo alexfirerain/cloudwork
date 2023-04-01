@@ -1,36 +1,30 @@
 package ru.netology.cloudwork.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.codec.KotlinSerializationStringEncoder;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A model of user to be stored in a base.
+ */
 @Data
 @Entity
 @Table(name = "users")
-public class UserEntity implements UserDetails {
-
-    @Autowired
-    private final PasswordEncoder encoder;
+@NoArgsConstructor
+public class UserEntity {
 
     /**
-     * A practical constructor for convenient user creation;
-     * if encodes
-     * @param username
-     * @param password
-     * @param authorities
+     * A practical constructor for convenient user creation.
+     * @param username  a username.
+     * @param password  a password.
+     * @param authorities   a set of roles.
      */
     public UserEntity(String username, String password, Role... authorities) {
         this.username = username;
-        this.password = encoder.encode(password);
+        this.password = password;
         this.authorities = Set.of(authorities);
     }
 
@@ -44,10 +38,11 @@ public class UserEntity implements UserDetails {
 
     private String password;
 
-    @OneToMany(mappedBy ="owner", fetch = FetchType.EAGER)
-    private List<FileEntity> files;
     @OneToMany
     private Set<Role> authorities;
+
+    @OneToMany(mappedBy ="owner", fetch = FetchType.EAGER)
+    private List<FileEntity> files;
 
     @Column(name = "account_expired")
     private boolean accountExpired = false;
@@ -59,32 +54,4 @@ public class UserEntity implements UserDetails {
 
     private boolean enabled = true;
 
-    public UserEntity() {
-
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return !accountExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return !credentialsExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
 }
