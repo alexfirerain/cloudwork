@@ -10,8 +10,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import ru.netology.cloudwork.entity.Role;
+import ru.netology.cloudwork.entity.UserEntity;
+
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -45,17 +51,21 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        UserDetails user = User.withUsername("storageuser")
-                .password(encoder.encode("0000"))
-                .roles("USER")
-                .build();
+        UserEntity user = new UserEntity("user",
+                                encoder.encode("0000"),
+                                Role.USER);
 
         UserDetails admin = User.withUsername("admin")
                 .password(encoder.encode("9999"))
                 .roles("SUPERUSER")
                 .build();
 
-        return new InMemoryUserDetailsManager(user, admin);
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
+        jdbcUserDetailsManager.createUser(user);
+        jdbcUserDetailsManager.createUser(admin);
+
+        return jdbcUserDetailsManager;
+//        InMemoryUserDetailsManager(user, admin);
     }
 
     @Bean

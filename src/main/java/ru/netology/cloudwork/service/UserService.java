@@ -23,6 +23,7 @@ public class UserService implements UserDetailsService {
     public UserService(IdentityService identityService, UserRepository userRepository) {
         this.identityService = identityService;
         this.userRepository = userRepository;
+        this.createUser();
     }
 
     /**
@@ -76,6 +77,9 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        Optional<UserEntity> entity = userRepository.findByUsername(username);
+        if (entity.isEmpty())
+            throw new UsernameNotFoundException("Юзернейм не найден");
+        return entity.get();
     }
 }
