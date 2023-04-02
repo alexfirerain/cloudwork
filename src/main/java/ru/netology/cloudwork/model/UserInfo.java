@@ -1,6 +1,6 @@
 package ru.netology.cloudwork.model;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,11 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.netology.cloudwork.entity.Role;
 import ru.netology.cloudwork.entity.UserEntity;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
+@AllArgsConstructor
 public class UserInfo implements UserDetails {
     private String username;
     private String password;
@@ -29,7 +32,8 @@ public class UserInfo implements UserDetails {
     public UserInfo(UserEntity storedUser) {
         this.username = storedUser.getUsername();
         this.password = storedUser.getPassword();
-        this.authorities = storedUser.getAuthorities();
+        this.authorities = Arrays.stream(storedUser.getAuthorities().split(","))
+                                    .map(Role::valueOf).collect(Collectors.toSet());
         this.accountExpired = storedUser.isAccountExpired();
         this.locked = storedUser.isLocked();
         this.credentialsExpired = storedUser.isCredentialsExpired();
@@ -46,6 +50,15 @@ public class UserInfo implements UserDetails {
         this.username = username;
         this.password = password;
         this.authorities = Set.of(authorities);
+    }
+
+    /**
+     * A simple constructor defaulting a new USER-role.
+     * @param username a username.
+     * @param password a password.
+     */
+    public UserInfo(String username, String password) {
+        this(username, password, Role.USER);
     }
 
     @Override

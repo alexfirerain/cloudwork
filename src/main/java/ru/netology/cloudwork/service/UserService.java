@@ -1,5 +1,6 @@
 package ru.netology.cloudwork.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,12 +23,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * A manager for user tokens and sessions.
  */
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    public UserService(IdentityService identityService, UserRepository userRepository) {
-        this.identityService = identityService;
-        this.userRepository = userRepository;
-    }
+//    public UserService(IdentityService identityService, UserRepository userRepository) {
+//        this.identityService = identityService;
+//        this.userRepository = userRepository;
+//    }
 
     /**
      * Mappings between token and username.
@@ -89,5 +91,10 @@ public class UserService implements UserDetailsService {
         entity.orElseThrow(() ->
                 new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
         return entity.map(UserInfo::new).get();
+    }
+
+    public UserEntity createUser(UserEntity user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 }

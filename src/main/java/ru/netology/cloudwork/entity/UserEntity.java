@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A model of user to be stored in a base.
@@ -25,7 +26,7 @@ public class UserEntity {
     public UserEntity(String username, String password, Role... authorities) {
         this.username = username;
         this.password = password;
-        this.authorities = Set.of(authorities);
+        this.authorities = Arrays.stream(authorities).map(Role::getAuthority).collect(Collectors.joining(","));
     }
 
     /**
@@ -48,8 +49,10 @@ public class UserEntity {
 
     private String password;
 
-    @OneToMany
-    private Set<Role> authorities;
+    /**
+     * A string containing a CSV list of {@link Role Roles}.
+     */
+    private String authorities;
 
     @OneToMany(mappedBy ="owner", fetch = FetchType.EAGER)
     private List<FileEntity> files;
