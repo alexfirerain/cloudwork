@@ -1,18 +1,15 @@
 package ru.netology.cloudwork.service;
 
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Service;
-import ru.netology.cloudwork.dto.LoginResponse;
 import ru.netology.cloudwork.dto.LoginRequest;
+import ru.netology.cloudwork.dto.LoginResponse;
 import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.model.UserInfo;
 import ru.netology.cloudwork.repository.UserRepository;
@@ -89,8 +86,8 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> entity = userRepository.findByUsername(username);
-        entity.orElseThrow(
-                () -> new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
+        entity.orElseThrow(() ->
+                new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
         return entity.map(UserInfo::new).get();
     }
 }

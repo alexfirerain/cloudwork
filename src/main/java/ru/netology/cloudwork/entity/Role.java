@@ -1,11 +1,24 @@
 package ru.netology.cloudwork.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.NoArgsConstructor;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.core.GrantedAuthority;
 
+@Entity
 public enum Role implements GrantedAuthority {
     USER,
     SUPERUSER;
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    Role() {
+
+    }
 
     /**
      * If the <code>GrantedAuthority</code> can be represented as a <code>String</code>
@@ -26,5 +39,13 @@ public enum Role implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return name();
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

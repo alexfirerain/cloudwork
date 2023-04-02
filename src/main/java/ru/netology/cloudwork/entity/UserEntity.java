@@ -28,6 +28,16 @@ public class UserEntity {
         this.authorities = Set.of(authorities);
     }
 
+    /**
+     * A practical constructor for convenient user creation
+     * defaulting a role to just being a USER.
+     * @param username  a username.
+     * @param password  a password.
+     */
+    public UserEntity(String username, String password) {
+        this(username, password, Role.USER);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")

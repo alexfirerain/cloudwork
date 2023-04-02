@@ -1,5 +1,7 @@
 server:
   port: 9090
+  error:
+    include-message: always
   
 spring:
   datasource:
@@ -19,3 +21,13 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create
+
+logging:
+  level:
+    org.springframework: INFO
+    ru.netology: TRACE
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+    file: "%d %p %c{1.} [%t] %m%n"
+  file:
+    name: ./log/cloudwork.log

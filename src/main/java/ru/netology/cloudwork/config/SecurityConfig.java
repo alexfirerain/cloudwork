@@ -49,24 +49,24 @@ public class SecurityConfig {
 
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        UserEntity user = new UserEntity("user",
-                                encoder.encode("0000"),
-                                Role.USER);
-
-        UserDetails admin = User.withUsername("admin")
-                .password(encoder.encode("9999"))
-                .roles("SUPERUSER")
-                .build();
-
-        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
-        jdbcUserDetailsManager.createUser(user);
-        jdbcUserDetailsManager.createUser(admin);
-
-        return jdbcUserDetailsManager;
-//        InMemoryUserDetailsManager(user, admin);
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+//        UserEntity user = new UserEntity("user",
+//                                encoder.encode("0000"),
+//                                Role.USER);
+//
+//        UserDetails admin = User.withUsername("admin")
+//                .password(encoder.encode("9999"))
+//                .roles("SUPERUSER")
+//                .build();
+//
+//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
+////        jdbcUserDetailsManager.createUser(user);
+////        jdbcUserDetailsManager.createUser(admin);
+//
+//        return jdbcUserDetailsManager;
+////        InMemoryUserDetailsManager(user, admin);
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

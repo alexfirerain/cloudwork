@@ -1,5 +1,6 @@
 package ru.netology.cloudwork.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.netology.cloudwork.dto.LoginResponse;
@@ -10,10 +11,15 @@ import ru.netology.cloudwork.service.UserService;
  * A controller for user login and logout.
  */
 @RestController
+@Slf4j
 //@CrossOrigin(origins = "http://localhost:8080")
 public class EntranceController {
 
-    private UserService userService;
+    private final UserService userService;
+
+    public EntranceController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
