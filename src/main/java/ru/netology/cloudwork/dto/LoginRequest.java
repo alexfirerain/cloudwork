@@ -4,18 +4,19 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 /**
- * A request to be logged in from client to the server side.
+ * A request from a client to be logged to the server side.
  */
 @Data
-@NoArgsConstructor
 @Getter
+@Validated
 public class LoginRequest {
     @NotBlank(message = "Не указано имя.")
     private String login;
 
     @NotNull(message = "Не указан пароль.")
     private String password;
+
 }

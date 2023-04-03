@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 public class IdentityService {
 
     public String generateTokenFor(String usernameRequested) {
-        return "хуй";
+        return "right_token";
     }
 }

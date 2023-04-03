@@ -1,5 +1,7 @@
 package ru.netology.cloudwork.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,17 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * A manager for user tokens and sessions.
  */
 @Service
-//@RequiredArgsConstructor
+@Slf4j
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-
-    public UserService(IdentityService identityService, UserRepository userRepository) {
-        this.identityService = identityService;
-        this.userRepository = userRepository;
-
-        // TODO: move to the preloader
-        if (!isUserPresent("user"))
-            createUser(new UserEntity("user", "0000"));
-    }
 
     /**
      * Mappings between token and username.
@@ -90,12 +84,20 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("UserService is asked for {}", username);
+
         Optional<UserEntity> entity = userRepository.findByUsername(username);
-        entity.orElseThrow(() ->
-                new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
+        entity.orElseThrow(() -> {
+            log.warn("Username {} not found", username);
+            return new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
+        });
         UserInfo userInfo = entity.map(UserInfo::new).get();
-        if (userInfo.getAuthorities().isEmpty())
+        log.info("User {} found", userInfo);
+
+    if (userInfo.getAuthorities().isEmpty()) {
+            log.warn("User {} authorities not defined", username);
             throw new UsernameNotFoundException("Полномочия пользователя не определены.");
+        }
         return userInfo;
     }
 

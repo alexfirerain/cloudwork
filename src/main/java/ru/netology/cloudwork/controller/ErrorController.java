@@ -15,7 +15,6 @@ public class ErrorController {
 
     private static final AtomicInteger idCount = new AtomicInteger();
 
-
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorDto> handleBadRequest(RuntimeException exception) {
         return new ResponseEntity<>(
