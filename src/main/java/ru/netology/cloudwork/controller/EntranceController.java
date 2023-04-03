@@ -30,7 +30,7 @@ public class EntranceController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Object> logout(@RequestParam("auth-token") String token) {
+    public ResponseEntity<Object> logout(@RequestHeader(name = "auth-token") String token) {
         userService.terminateSession(token);
         return ResponseEntity.ok().build();
     }

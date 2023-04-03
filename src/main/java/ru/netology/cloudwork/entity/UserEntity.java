@@ -41,28 +41,27 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Long userId;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
     /**
      * A string containing a CSV list of {@link Role Roles}.
      */
+    @Column(nullable = false)
     private String authorities;
 
     @OneToMany(mappedBy ="owner", fetch = FetchType.LAZY)
     private List<FileEntity> files;
 
-    @Column(name = "account_expired")
     private boolean accountExpired = false;
 
     private boolean locked = false;
 
-    @Column(name = "credentials_expired")
     private boolean credentialsExpired = false;     // rename as interface methods?
 
     private boolean enabled = true;

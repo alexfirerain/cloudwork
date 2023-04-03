@@ -20,15 +20,11 @@ public class FileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "file_id")
     private Long fileId;
 
     @NotBlank
-    @Column(name = "file_name")
     private String fileName;
 
-//    @Column(name = "file_type")
-//    private String fileType;
     @PositiveOrZero
     private Long size;
 
