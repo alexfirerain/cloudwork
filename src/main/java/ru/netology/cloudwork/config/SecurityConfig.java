@@ -31,7 +31,7 @@ public class SecurityConfig {
                     CorsRegistry registry = new CorsRegistry();
                     registry.addMapping("/**")
                             .allowCredentials(true)
-                            .allowedOrigins("http://localhost:8080")
+                            .allowedOrigins("http://localhost:8080", "http://localhost:8081")
                             .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS");
                 })
                 .csrf()
@@ -68,9 +68,9 @@ public class SecurityConfig {
 ////        InMemoryUserDetailsManager(user, admin);
 //    }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 }

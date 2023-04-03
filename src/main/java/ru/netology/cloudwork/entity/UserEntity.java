@@ -54,7 +54,7 @@ public class UserEntity {
      */
     private String authorities;
 
-    @OneToMany(mappedBy ="owner", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy ="owner", fetch = FetchType.LAZY)
     private List<FileEntity> files;
 
     @Column(name = "account_expired")

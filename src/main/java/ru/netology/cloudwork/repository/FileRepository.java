@@ -1,0 +1,16 @@
+package ru.netology.cloudwork.repository;
+
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ru.netology.cloudwork.entity.FileEntity;
+import ru.netology.cloudwork.entity.UserEntity;
+
+import java.util.List;
+
+@Repository
+public interface FileRepository extends JpaRepository<FileEntity, Long> {
+
+    List<FileEntity> findByOwner(@NotNull UserEntity owner);
+
+}

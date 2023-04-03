@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.service.FileService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -18,8 +19,8 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<FileInfo>> listFiles(String token, int limit) {
-        return fileService.listFiles(token, limit);
+    public ResponseEntity<List<FileInfo>> listFiles(Principal user, int limit) {
+        return fileService.listFiles(user.getName(), limit);
 
     }
 

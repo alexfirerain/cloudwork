@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public class FileService {
 
-    public ResponseEntity<List<FileInfo>> listFiles(String token, int limit) {
+    public ResponseEntity<List<FileInfo>> listFiles(String username, int limit) {
         return null;
     }
 }

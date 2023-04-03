@@ -22,7 +22,8 @@ public class EntranceController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
+        log.debug("Controller received {}", loginRequest);
 
         return ResponseEntity.ok(userService.initializeSession(loginRequest));
 //        return ResponseEntity.ok(new LoginResponse("пизда"));

@@ -1,6 +1,5 @@
 package ru.netology.cloudwork.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,13 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * A manager for user tokens and sessions.
  */
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-//    public UserService(IdentityService identityService, UserRepository userRepository) {
-//        this.identityService = identityService;
-//        this.userRepository = userRepository;
-//    }
+    public UserService(IdentityService identityService, UserRepository userRepository) {
+        this.identityService = identityService;
+        this.userRepository = userRepository;
+
+        if (!isUserPresent("user"))
+            createUser(new UserEntity("user", "0000"));
+    }
 
     /**
      * Mappings between token and username.
@@ -90,11 +92,24 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> entity = userRepository.findByUsername(username);
         entity.orElseThrow(() ->
                 new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
-        return entity.map(UserInfo::new).get();
+        UserInfo userInfo = entity.map(UserInfo::new).get();
+        if (userInfo.getAuthorities().isEmpty())
+            throw new UsernameNotFoundException("Полномочия пользователя не определены.");
+        return userInfo;
     }
 
-    public UserEntity createUser(UserEntity user) {
+    /**
+     * Takes an user entity, encrypts its password and transfers
+     * to repository for saving.
+     * @param user an almost ready entity.
+     */
+    public void createUser(UserEntity user) {
         user.setPassword(encoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
     }
+
+    public boolean isUserPresent(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
 }
