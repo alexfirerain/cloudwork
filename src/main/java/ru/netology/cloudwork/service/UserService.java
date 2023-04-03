@@ -29,6 +29,7 @@ public class UserService implements UserDetailsService {
         this.identityService = identityService;
         this.userRepository = userRepository;
 
+        // TODO: move to the preloader
         if (!isUserPresent("user"))
             createUser(new UserEntity("user", "0000"));
     }
@@ -43,7 +44,7 @@ public class UserService implements UserDetailsService {
 
 
     public LoginResponse initializeSession(LoginRequest loginRequest) {
-        String usernameRequested = loginRequest.getUsername();
+        String usernameRequested = loginRequest.getLogin();
         UserInfo user = (UserInfo) loadUserByUsername(usernameRequested);
 
         if (!encoder.matches(loginRequest.getPassword(), user.getPassword()))
