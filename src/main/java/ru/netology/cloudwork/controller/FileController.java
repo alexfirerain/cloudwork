@@ -2,6 +2,7 @@ package ru.netology.cloudwork.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.service.FileService;
@@ -19,7 +20,8 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<FileInfo>> listFiles(Principal user, int limit) {
+    public ResponseEntity<List<FileInfo>> listFiles(Principal user,
+                                                    @RequestParam(name = "limit", defaultValue = "3") int limit) {
         return fileService.listFiles(user.getName(), limit);
 
     }
