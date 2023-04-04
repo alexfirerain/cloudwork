@@ -2,6 +2,7 @@ package ru.netology.cloudwork.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,7 +16,8 @@ public class ErrorController {
 
     private static final AtomicInteger idCount = new AtomicInteger();
 
-    @ExceptionHandler(UsernameNotFoundException.class)
+    @ExceptionHandler({UsernameNotFoundException.class,
+                       BadCredentialsException.class})
     public ResponseEntity<ErrorDto> handleBadRequest(RuntimeException exception) {
         return new ResponseEntity<>(
                 new ErrorDto(exception.getLocalizedMessage(), idCount.getAndIncrement()),

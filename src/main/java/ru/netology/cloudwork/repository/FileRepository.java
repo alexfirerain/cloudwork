@@ -7,10 +7,14 @@ import ru.netology.cloudwork.entity.FileEntity;
 import ru.netology.cloudwork.entity.UserEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
     List<FileEntity> findByOwner(@NotNull UserEntity owner);
+
+
+    Optional<FileEntity> findByOwnerAndAndFileName(@NotNull UserEntity owner, @NotNull String fileName);
 
 }

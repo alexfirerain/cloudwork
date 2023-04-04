@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.netology.cloudwork.entity.Role;
 import ru.netology.cloudwork.entity.UserEntity;
 
 import java.util.Arrays;

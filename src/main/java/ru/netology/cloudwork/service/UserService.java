@@ -94,7 +94,7 @@ public class UserService implements UserDetailsService {
         UserInfo userInfo = entity.map(UserInfo::new).get();
         log.info("User {} found", userInfo);
 
-    if (userInfo.getAuthorities().isEmpty()) {
+        if (userInfo.getAuthorities().isEmpty()) {
             log.warn("User {} authorities not defined", username);
             throw new UsernameNotFoundException("Полномочия пользователя не определены.");
         }

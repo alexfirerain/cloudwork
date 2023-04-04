@@ -6,6 +6,10 @@ import org.springframework.stereotype.Component;
 import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.service.UserService;
 
+/**
+ * Just an addl utility to have some users preloaded
+ * while testing and checking the CloudWork works.
+ */
 @Component
 @RequiredArgsConstructor
 public class UserPreloader implements CommandLineRunner {
