@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -30,6 +30,8 @@ public class FileEntity {
 
     private int hash;
 
+    private String fileType;
+
     @NotNull
     @ManyToOne
     private UserEntity owner;
@@ -37,11 +39,21 @@ public class FileEntity {
     @Lob @Basic(fetch = LAZY)
     private byte[] body;
 
-    public FileEntity(File file, UserEntity owner) throws IOException {
-        this.fileName = file.getName();
-        this.size = file.length();
+    public FileEntity(MultipartFile file, UserEntity owner) throws IOException {
+        this.fileName = file.getOriginalFilename();
+        this.size = file.getSize();
         this.hash = file.hashCode();
+        this.fileType = file.getContentType();
         this.owner = owner;
-        this.body = Files.readAllBytes(file.toPath());
+        this.body = file.getBytes();
+    }
+
+    public FileEntity(UserEntity owner, String fileName, MultipartFile file) throws IOException {
+        this.fileName = fileName;
+        this.size = file.getSize();
+        this.hash = file.hashCode();
+        this.fileType = file.getContentType();
+        this.owner = owner;
+        this.body = file.getBytes();
     }
 }

@@ -30,7 +30,7 @@ public class EntranceController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Object> logout(@RequestHeader(name = "auth-token") String token) {
+    public ResponseEntity<?> logout(@RequestHeader(name = "auth-token") String token) {
         log.info("Controller logging out {}", token);
 //        userService.terminateSession(token);
         return ResponseEntity.ok().build();
