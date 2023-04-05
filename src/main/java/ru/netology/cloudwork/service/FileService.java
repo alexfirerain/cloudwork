@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.repository.UserRepository;
@@ -35,5 +36,12 @@ public class FileService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(files);
+    }
+
+    public ResponseEntity<?>storeFile(String username, String filename, MultipartFile file) {
+
+
+
+        return ResponseEntity.ok().build();
     }
 }

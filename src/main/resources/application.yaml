@@ -31,3 +31,7 @@ logging:
     file: "%d %p %c{1.} [%t] %m%n"
   file:
     name: ./log/cloudwork.log
+
+application:
+  user-preloader:
+    enabled: true

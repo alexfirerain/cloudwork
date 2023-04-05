@@ -1,9 +1,9 @@
 package ru.netology.cloudwork.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.service.FileService;
 
@@ -11,6 +11,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
+@Slf4j
 public class FileController {
 
     private final FileService fileService;
@@ -22,8 +23,16 @@ public class FileController {
     @GetMapping("/list")
     public ResponseEntity<List<FileInfo>> listFiles(Principal user,
                                                     @RequestParam(name = "limit", defaultValue = "3") int limit) {
+        log.trace("Request to list {} files of {}.", limit, user.toString());
         return fileService.listFiles(user.getName(), limit);
 
     }
+
+    @PostMapping("/file")
+    public ResponseEntity<?> uploadFile(Principal user,
+                                        @RequestParam(name = "filename") String filename,
+                                        @RequestBody MultipartFile file) {
+        return fileService.storeFile(user.getName(), filename, file);
+    }   
 
 }

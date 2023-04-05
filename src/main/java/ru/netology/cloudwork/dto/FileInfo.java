@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.netology.cloudwork.entity.FileEntity;
 
+/**
+ * A presentation of file's name and size
+ * to be transferred in a DTO letter.
+ */
 @Getter
 @AllArgsConstructor
 public class FileInfo {

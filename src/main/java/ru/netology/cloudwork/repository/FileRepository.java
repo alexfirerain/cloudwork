@@ -15,6 +15,6 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
     List<FileEntity> findByOwner(@NotNull UserEntity owner);
 
 
-    Optional<FileEntity> findByOwnerAndAndFileName(@NotNull UserEntity owner, @NotNull String fileName);
+//    Optional<FileEntity> findByOwnerAndAndFileName(@NotNull UserEntity owner, @NotNull String fileName);
 
 }

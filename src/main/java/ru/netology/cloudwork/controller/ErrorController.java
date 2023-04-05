@@ -12,11 +12,27 @@ import ru.netology.cloudwork.dto.ErrorDto;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A general controller designed to intercept and handle
+ * every exceptional events in the CloudWork.
+ */
 @ControllerAdvice
 @Slf4j
 public class ErrorController {
+    /**
+     * An all-through numerator of errors in da app.
+     * The generated sequence does not persist and starts over
+     * with every application run.
+     */
     private static final AtomicInteger idCount = new AtomicInteger();
 
+
+    /**
+     * Handles situations when there's a bad request, username not found
+     * or password not matched.
+     * @param exception an exception being cought.
+     * @return a 400 http-response with error's description and number.
+     */
     @ExceptionHandler({UsernameNotFoundException.class,
                        BadCredentialsException.class})
     public ResponseEntity<ErrorDto> handleBadRequest(RuntimeException exception) {
@@ -27,6 +43,12 @@ public class ErrorController {
                 HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles situations when there's a problem with
+     * user identity, credentials, authorization and so on.
+     * @param exception an exception being caught.
+     * @return a 401 http-response with error's description and number.
+     */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorDto> handleAuthorizationFailure(RuntimeException exception) {
         String message = exception.getLocalizedMessage();
@@ -36,6 +58,11 @@ public class ErrorController {
                 HttpStatus.UNAUTHORIZED);
     }
 
+    /**
+     * Handles situations when any other errors in da app occur.
+     * @param exception an exception being caught.
+     * @return a 500 http-response with error's description and number.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleServerError(RuntimeException exception) {
         String message = exception.getLocalizedMessage();
