@@ -15,9 +15,10 @@ import static jakarta.persistence.FetchType.LAZY;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "files")
+@Table(name = "files",
+        uniqueConstraints =  @UniqueConstraint(
+                columnNames = { "file_name", "owner_user_id" }))
 public class FileEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fileId;

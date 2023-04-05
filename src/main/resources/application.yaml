@@ -22,6 +22,11 @@ spring:
     hibernate:
       ddl-auto: create
 
+  servlet:
+    multipart:
+      max-file-size: 134217728
+      max-request-size: 134217728
+
 logging:
   level:
     org.springframework: INFO
@@ -35,3 +40,4 @@ logging:
 application:
   user-preloader:
     enabled: true
+  front-url: "http://localhost:8080", "http://localhost:8081"

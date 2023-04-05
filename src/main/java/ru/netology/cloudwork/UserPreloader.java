@@ -34,7 +34,5 @@ public class UserPreloader implements CommandLineRunner {
                 .filter(x -> !userService.isUserPresent(x.getUsername()))
                 .forEach(userService::createUser);
 
-//        if (!userService.isUserPresent("user"))
-//            userService.createUser(new UserEntity("user", "0000"));
     }
 }

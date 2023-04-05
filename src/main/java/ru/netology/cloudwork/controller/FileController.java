@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * The controller to handle file-related operations.
+ */
 @RestController
 @Slf4j
 public class FileController {
