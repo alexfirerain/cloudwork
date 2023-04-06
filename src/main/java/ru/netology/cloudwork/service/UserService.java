@@ -2,8 +2,9 @@ package ru.netology.cloudwork.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,11 +36,20 @@ public class UserService implements UserDetailsService {
     private final IdentityService identityService;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final AuthenticationManager authenticationManager;
+
+
 
 
     public LoginResponse initializeSession(LoginRequest loginRequest) {
         String usernameRequested = loginRequest.getLogin();
         UserInfo user = (UserInfo) loadUserByUsername(usernameRequested);
+
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(usernameRequested, loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         if (!encoder.matches(loginRequest.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Неверный пароль.");
@@ -51,7 +61,7 @@ public class UserService implements UserDetailsService {
                         .orElse(null);
 
         if (token == null) {
-            token = identityService.generateTokenFor(usernameRequested);
+            token = identityService.generateTokenFor(authentication);
             sessions.put(token, usernameRequested);
         }
 

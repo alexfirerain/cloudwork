@@ -2,10 +2,16 @@ package ru.netology.cloudwork.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import ru.netology.cloudwork.service.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -37,28 +43,19 @@ public class SecurityConfig {
 
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-//        UserEntity user = new UserEntity("user",
-//                                encoder.encode("0000"),
-//                                Role.USER);
-//
-//        UserDetails admin = User.withUsername("admin")
-//                .password(encoder.encode("9999"))
-//                .roles("SUPERUSER")
-//                .build();
-//
-//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
-////        jdbcUserDetailsManager.createUser(user);
-////        jdbcUserDetailsManager.createUser(admin);
-//
-//        return jdbcUserDetailsManager;
-////        InMemoryUserDetailsManager(user, admin);
-//    }
+    @Bean
+    public AuthenticationManager authenticationManager(UserService userService,
+                                                       PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authProvider);
+    }
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }
