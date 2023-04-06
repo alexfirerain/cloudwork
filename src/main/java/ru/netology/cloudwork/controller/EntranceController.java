@@ -25,14 +25,19 @@ public class EntranceController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Controller received {}", loginRequest);
 
-        return ResponseEntity.ok(userService.initializeSession(loginRequest));
+        LoginResponse tokenOffer = userService.initializeSession(loginRequest);
+        log.trace("Controller returns {}", tokenOffer);
+
+        return ResponseEntity.ok(tokenOffer);
 //        return ResponseEntity.ok(new LoginResponse("take-a-token"));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader(name = "auth-token") String token) {
+    public ResponseEntity<?> logout(@RequestHeader(name = "auth-token") final String token) {
         log.info("Controller logging out {}", token);
+
 //        userService.terminateSession(token);
+
         return ResponseEntity.ok().build();
     }
 

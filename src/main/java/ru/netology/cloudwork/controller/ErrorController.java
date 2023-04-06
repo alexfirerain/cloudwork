@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.netology.cloudwork.dto.ErrorDto;
@@ -30,11 +32,12 @@ public class ErrorController {
     /**
      * Handles situations when there's a bad request, username not found
      * or password not matched.
-     * @param exception an exception being cought.
+     * @param exception an exception being caught.
      * @return a 400 http-response with error's description and number.
      */
     @ExceptionHandler({UsernameNotFoundException.class,
-                       BadCredentialsException.class})
+                       BadCredentialsException.class,
+                       MissingRequestValueException.class })
     public ResponseEntity<ErrorDto> handleBadRequest(RuntimeException exception) {
         String message = exception.getLocalizedMessage();
         log.warn("A Bad-Request exception happened: {}", message);
