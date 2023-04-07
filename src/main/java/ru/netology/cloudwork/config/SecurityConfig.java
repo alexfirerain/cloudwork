@@ -33,11 +33,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/login")
                 .permitAll()
-//                .requestMatchers("/register")
-//                .hasRole("SUPERUSER")
                 .anyRequest()
                 .authenticated()
-
                 .and()
                 .build();
 
