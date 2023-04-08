@@ -19,14 +19,14 @@ public class IdentityService {
 
     public String generateTokenFor(Authentication authentication) {
         UserInfo user = (UserInfo) authentication.getPrincipal();
-        Instant now = Instant.now();
-        SecretKey key = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
+        Instant moment = Instant.now();
+        SecretKey cipher = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plus(1, ChronoUnit.HOURS)))
-                .signWith(key)
+                .setIssuedAt(Date.from(moment))
+                .setExpiration(Date.from(moment.plus(1, ChronoUnit.HOURS)))
+                .signWith(cipher)
                 .compact();
 
 //        return "right_token";

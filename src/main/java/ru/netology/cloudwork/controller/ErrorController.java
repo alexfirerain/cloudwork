@@ -8,6 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingRequestValueException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.netology.cloudwork.dto.ErrorDto;
@@ -37,7 +38,7 @@ public class ErrorController {
      */
     @ExceptionHandler({UsernameNotFoundException.class,
                        BadCredentialsException.class,
-                       MissingRequestValueException.class })
+                       ServletRequestBindingException.class })
     public ResponseEntity<ErrorDto> handleBadRequest(RuntimeException exception) {
         String message = exception.getLocalizedMessage();
         log.warn("A Bad-Request exception happened: {}", message);

@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
     /**
      * Mappings between token and username.
      */
-    private final Map<String, String> sessions = new ConcurrentHashMap<>();
+    private final Map<String, String> sessions = new ConcurrentHashMap<>(); // can be SQL-saved
     private final IdentityService identityService;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder = new BCryptPasswordEncoder();
