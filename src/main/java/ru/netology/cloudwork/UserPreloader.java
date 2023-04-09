@@ -5,7 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import ru.netology.cloudwork.entity.UserEntity;
-import ru.netology.cloudwork.service.UserService;
+import ru.netology.cloudwork.service.UserManager;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
 @ConditionalOnProperty("application.user-preloader.enabled")
 public class UserPreloader implements CommandLineRunner {
 
-    private final UserService userService;
+    private final UserManager userManager;
 
     List<UserEntity> users = List.of(
         // add your users here
@@ -31,8 +31,8 @@ public class UserPreloader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         users.stream()
-                .filter(x -> !userService.isUserPresent(x.getUsername()))
-                .forEach(userService::createUser);
+                .filter(x -> !userManager.isUserPresent(x.getUsername()))
+                .forEach(userManager::createUser);
 
     }
 }
