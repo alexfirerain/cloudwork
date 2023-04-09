@@ -40,4 +40,6 @@ logging:
 application:
   user-preloader:
     enabled: true
-  front-url: "http://localhost:8080", "http://localhost:8081"
+  front-url:
+    - "http://localhost:8080"
+    - "http://localhost:8081"

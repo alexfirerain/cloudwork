@@ -1,5 +1,6 @@
 package ru.netology.cloudwork.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
+    ObjectMapper objectMapper = new ObjectMapper();
+
     private final ErrorController errorController;
 
     @Override
@@ -37,7 +40,8 @@ public class TokenFilter extends OncePerRequestFilter {
                                     new AuthenticationCredentialsNotFoundException(
                                             "Жетон не обнаружен в запросе."));
             response.setStatus(errorResponse.getStatusCode().value());
-            response.getOutputStream().write(errorResponse.getBody());
+            ErrorDto body = errorResponse.getBody();
+            response.getOutputStream().println(objectMapper.writeValueAsString(body));
             return;
         }
 

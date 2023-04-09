@@ -2,13 +2,15 @@ package ru.netology.cloudwork.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.netology.cloudwork.dto.LoginRequest;
@@ -35,7 +37,7 @@ public class UserService implements UserDetailsService {
     private final Map<String, String> sessions = new ConcurrentHashMap<>(); // can be SQL-saved
     private final IdentityService identityService;
     private final UserRepository userRepository;
-    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
 
 
@@ -80,6 +82,7 @@ public class UserService implements UserDetailsService {
         sessions.remove(token);
     }
 
+    // TODO: separate this user-loader away to avoid the circular reference
     /**
      * Locates the user based on the username. In the actual implementation, the search
      * may possibly be case-sensitive, or case-insensitive depending on how the
@@ -95,13 +98,12 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("UserService is asked for {}", username);
-
         Optional<UserEntity> entity = userRepository.findByUsername(username);
-        entity.orElseThrow(() -> {
+
+        UserInfo userInfo = entity.map(UserInfo::new).orElseThrow(() -> {
             log.warn("Username {} not found", username);
             return new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
         });
-        UserInfo userInfo = entity.map(UserInfo::new).get();
         log.info("User {} found", userInfo);
 
         if (userInfo.getAuthorities().isEmpty()) {
@@ -112,7 +114,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Takes an user entity, encrypts its password and transfers
+     * Takes a user entity, encrypts its password and transfers
      * to repository for saving.
      * @param user an almost ready entity.
      */

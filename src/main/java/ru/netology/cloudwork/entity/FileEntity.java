@@ -24,6 +24,7 @@ public class FileEntity {
     private Long fileId;
 
     @NotBlank
+    @Column(name = "file_name")
     private String fileName;
 
     @PositiveOrZero
