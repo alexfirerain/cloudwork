@@ -1,5 +1,7 @@
 package ru.netology.cloudwork.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,21 +17,26 @@ import ru.netology.cloudwork.service.UserManager;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-
+    @Value("${application.front-url}")
+    String[] frontHosts;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .httpBasic().disable()
                 .cors(httpSecurityCorsConfigurer -> {
                     CorsRegistry registry = new CorsRegistry();
+
                     registry.addMapping("/**")
                             .allowCredentials(true)
-                            .allowedOrigins("http://localhost:8080", "http://localhost:8081")
+                            .allowedOrigins(frontHosts)
                             .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS");
                 })
                 .csrf()
                 .disable()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/login")
                 .permitAll()

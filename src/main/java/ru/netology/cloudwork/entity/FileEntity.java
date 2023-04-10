@@ -12,6 +12,9 @@ import java.io.IOException;
 
 import static jakarta.persistence.FetchType.LAZY;
 
+/**
+ * Entity that represents file stored in the cloud.
+ */
 @Data
 @Entity
 @NoArgsConstructor

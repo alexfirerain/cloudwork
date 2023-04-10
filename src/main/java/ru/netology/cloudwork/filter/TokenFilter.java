@@ -27,8 +27,12 @@ public class TokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if ("/login".equals(request.getRequestURI()))
+        log.trace("filter entered");
+        if ("/login".equals(request.getRequestURI())) {
+            log.trace("bypass filter because login request");
+            filterChain.doFilter(request, response);
             return;
+        }
 
         String token = request.getHeader("auth-token");
         log.trace("Token met: " + token);

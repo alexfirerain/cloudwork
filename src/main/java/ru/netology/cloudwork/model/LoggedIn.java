@@ -8,6 +8,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A representation of user's state of being authenticated.
+ * It holds the username & password from corresponding user-entity
+ * along with its set of roles, and it can be authenticated or not.
+ */
 @Data
 public class LoggedIn implements Authentication {
     private String username;

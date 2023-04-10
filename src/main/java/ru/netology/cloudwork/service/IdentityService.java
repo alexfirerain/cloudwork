@@ -15,7 +15,7 @@ import java.util.Date;
 @Service
 public class IdentityService {
 
-    private final String signingKey = "xxx";
+    private final String signingKey = "ymLTU8Pq8aj4fmJZj60w24OrMNu1tIj4TVJ";
 
     public String generateTokenFor(Authentication authentication) {
         UserInfo user = (UserInfo) authentication.getPrincipal();
