@@ -25,14 +25,11 @@ public class UserManager implements UserDetailsService {
     private final PasswordEncoder encoder;
 
     /**
-     * Locates the user based on the username. In the actual implementation, the search
-     * may possibly be case-sensitive, or case-insensitive depending on how the
-     * implementation instance is configured. In this case, the <code>UserDetails</code>
-     * object that comes back may have a username that is of a different case than what
-     * was actually requested..
+     * Locates the user based on the username against DB. The <code>UserDetails</code>
+     * object that comes back is a {@link UserInfo} object.
      *
      * @param username the username identifying the user whose data is required.
-     * @return a fully populated user record (never <code>null</code>)
+     * @return a fully populated UserInfo instance (never <code>null</code>)
      * @throws UsernameNotFoundException if the user could not be found or the user has no
      *                                   GrantedAuthority
      */

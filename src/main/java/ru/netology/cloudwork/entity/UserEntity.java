@@ -67,4 +67,6 @@ public class UserEntity {
 
     private boolean enabled = true;
 
+    private String accessToken = null;
+
 }

@@ -12,6 +12,10 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * An implementation of UserDetails interface in the CloudWork user-management system.
+ * Encapsulates properties relevant to authentication but not to file-storing logics.
+ */
 @Setter
 @Getter
 @AllArgsConstructor

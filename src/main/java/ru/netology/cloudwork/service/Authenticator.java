@@ -1,50 +1,17 @@
 package ru.netology.cloudwork.service;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import ru.netology.cloudwork.model.UserInfo;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @Service
-public class IdentityService implements AuthenticationManager {
+@RequiredArgsConstructor
+public class Authenticator implements AuthenticationManager {
 
-//    private final String signingKey = "ymLTU8Pq8aj4fmJZj60w24OrMNu1tIj4TVJ";
-
-    public String generateTokenFor(Authentication authentication) {
-        UserInfo user = (UserInfo) authentication.getPrincipal();
-//        Instant moment = Instant.now();
-//        SecretKey cipher = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
-
-//        return Jwts.builder()
-//                .setSubject(user.getUsername())
-//                .setIssuedAt(Date.from(moment))
-//                .setExpiration(Date.from(moment.plus(1, ChronoUnit.HOURS)))
-//                .signWith(cipher)
-//                .compact();
-
-        String CWToken =
-
-        return "right_token";
-    }
-
-    /**
-     * Validates that the string in question is a present session-token
-     * in the database and the linked account has no reasons to be inactive.
-     * @param token
-     * @return
-     */
-    public boolean validateToken(String token) {
-        return false;
-    }
+    private final UserDetailsService userDetailsService;
 
     /**
      * Attempts to authenticate the passed {@link Authentication} object, returning a

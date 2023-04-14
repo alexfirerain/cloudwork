@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.dto.LoginResponse;
+import ru.netology.cloudwork.model.LoggedIn;
 import ru.netology.cloudwork.model.UserInfo;
 
 import java.util.Map;
@@ -41,7 +42,7 @@ public class UserService {
         String usernameRequested = loginRequest.getLogin();
         UserInfo user = (UserInfo) userManager.loadUserByUsername(usernameRequested);
 
-        Authentication authentication = authenticationManager
+        LoggedIn authentication = (LoggedIn) authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(usernameRequested, loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
