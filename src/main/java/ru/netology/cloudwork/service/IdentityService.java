@@ -31,16 +31,15 @@ public class IdentityService implements AuthenticationManager {
 //                .signWith(cipher)
 //                .compact();
 
-        String CWToken =
-
-        return "right_token";
+        return "%s@%s".formatted(user.getUsername(), new Date());
     }
 
     /**
      * Validates that the string in question is a present session-token
      * in the database and the linked account has no reasons to be inactive.
-     * @param token
-     * @return
+     * @param token string being validated.
+     * @return  true if the string is an active session token
+     * and the linked account is not inactive.
      */
     public boolean validateToken(String token) {
         return false;

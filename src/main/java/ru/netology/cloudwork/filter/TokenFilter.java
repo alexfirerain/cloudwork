@@ -9,12 +9,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.netology.cloudwork.controller.ErrorController;
 import ru.netology.cloudwork.dto.ErrorDto;
 import ru.netology.cloudwork.model.LoggedIn;
+import ru.netology.cloudwork.model.UserInfo;
 import ru.netology.cloudwork.service.IdentityService;
+import ru.netology.cloudwork.service.UserManager;
 
 import java.io.IOException;
 
@@ -29,8 +32,18 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private final ErrorController errorController;
     private final IdentityService identityService;
+    private final UserManager userManager;
 
-
+    /**
+     * Looks through incoming requests for tokens in their {@link #TOKEN_HEADER}.
+     * When it finds no token, bypasses the request.
+     * When does, validates it and sets the linked user authenticated to this request.
+     * @param request   a {@link HttpServletRequest} coming to the filter.
+     * @param response  a {@link HttpServletResponse} coming from the filter.
+     * @param filterChain a {@link FilterChain} filtering the incoming requests.
+     * @throws ServletException sometimes somehow.
+     * @throws IOException  probably when physical troubles come.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = extractToken(request);
@@ -44,27 +57,35 @@ public class TokenFilter extends OncePerRequestFilter {
 //            return;
 //        }
 
-        LoggedIn auth = new LoggedIn();
+        UserInfo user = userManager.findUserByToken(token);
 
-
+        if (user != null) {
+            LoggedIn auth = new LoggedIn(user,true);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
 
         filterChain.doFilter(request, response);
     }
 
-    private void submitErrorResponse(HttpServletResponse response, String errorMsg) throws IOException {
-        ResponseEntity<ErrorDto> errorResponse = errorController
-                .handleBadRequest(new AuthenticationCredentialsNotFoundException(errorMsg));
-        response.setStatus(errorResponse.getStatusCode().value());
-        ErrorDto body = errorResponse.getBody();
-        response.getOutputStream().println(objectMapper.writeValueAsString(body));
-    }
+//    private void submitErrorResponse(HttpServletResponse response, String errorMsg) throws IOException {
+//        ResponseEntity<ErrorDto> errorResponse = errorController
+//                .handleBadRequest(new AuthenticationCredentialsNotFoundException(errorMsg));
+//        response.setStatus(errorResponse.getStatusCode().value());
+//        ErrorDto body = errorResponse.getBody();
+//        response.getOutputStream().println(objectMapper.writeValueAsString(body));
+//    }
 
+    /**
+     * Extracts from the request a matter of token in {@link #TOKEN_HEADER}
+     * following after {@link #TOKEN_PREFIX}.
+     * @param request a {@link HttpServletRequest} under the extraction.
+     * @return a string from TOKEN_HEADER value succeeding after TOKEN_PREFIX
+     * or {@code null} if no such header or its value doesn't start with TOKEN_PREFIX.
+     */
     private String extractToken(HttpServletRequest request) {
-        String token = request.getParameter(TOKEN_HEADER);
+        String token = request.getHeader(TOKEN_HEADER);
 
-        if (token != null && !token.isBlank() && token.startsWith(TOKEN_PREFIX))
-            token = token.substring(TOKEN_PREFIX.length());
-
-        return token;
+        return token == null || token.isBlank() || !token.startsWith(TOKEN_PREFIX) ?
+                null : token.substring(TOKEN_PREFIX.length());
     }
 }

@@ -65,4 +65,19 @@ public class UserManager implements UserDetailsService {
         return userRepository.findByUsername(username).isPresent();
     }
 
+    /**
+     * Returns UserInfo representation of the user
+     * mapped to the token in question
+     * or null if none.
+     * @param token token to be identified as a mark of user session.
+     * @return a UserDetail-featured object for the user mapped to the token
+     * or {@code null} if the token is null or not found in the DB.
+     */
+    public UserInfo findUserByToken(String token) {
+        return token == null ? null :
+                userRepository
+                .findByAccessToken(token)
+                .map(UserInfo::new)
+                .orElse(null);
+    }
 }
