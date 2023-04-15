@@ -9,8 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A representation of user's state of being authenticated.
- * It holds the username & password from corresponding user-entity
+ * The implementation of {@link Authentication}, a representation of
+ * user's state of being authenticated against the CloudWorkToken model.
+ * It holds the username & password from the corresponding user-entity
  * along with its set of roles, and it can be authenticated or not.
  */
 @Data
@@ -64,7 +65,7 @@ public class LoggedIn implements Authentication {
 
     /**
      * Stores additional details about the authentication request. These might be an IP
-     * address, certificate serial number etc.
+     * address, certificate serial number, etc.
      *
      * @return additional details about the authentication request, or <code>null</code>
      * if not used

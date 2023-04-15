@@ -2,25 +2,33 @@ package ru.netology.cloudwork.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+import ru.netology.cloudwork.model.LoggedIn;
 import ru.netology.cloudwork.model.UserInfo;
 
 import javax.crypto.SecretKey;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class IdentityService implements AuthenticationManager {
+    private UserManager userManager;
 
 //    private final String signingKey = "ymLTU8Pq8aj4fmJZj60w24OrMNu1tIj4TVJ";
 
-    public String generateTokenFor(Authentication authentication) {
-        UserInfo user = (UserInfo) authentication.getPrincipal();
+    public String generateTokenFor(LoggedIn authentication) {
+
 //        Instant moment = Instant.now();
 //        SecretKey cipher = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
 
@@ -31,7 +39,7 @@ public class IdentityService implements AuthenticationManager {
 //                .signWith(cipher)
 //                .compact();
 
-        return "%s@%s".formatted(user.getUsername(), new Date());
+        return "%s@%s".formatted(authentication.getPrincipal(), new Date());
     }
 
     /**
@@ -42,7 +50,13 @@ public class IdentityService implements AuthenticationManager {
      * and the linked account is not inactive.
      */
     public boolean validateToken(String token) {
-        return false;
+        UserInfo user = userManager.findUserByToken(token);
+
+        return user != null &&
+                user.isAccountNonExpired() &&
+                user.isAccountNonLocked() &&
+                user.isCredentialsNonExpired() &&
+                user.isEnabled();
     }
 
     /**
@@ -72,6 +86,11 @@ public class IdentityService implements AuthenticationManager {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        return null;
+
+        // TODO: get UserInfo by principal and test whether it will pass i.e active and mapped to a token
+
+        authentication.setAuthenticated(true);
+
+        return authentication;
     }
 }

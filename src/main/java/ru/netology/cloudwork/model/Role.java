@@ -3,26 +3,22 @@ package ru.netology.cloudwork.model;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.core.GrantedAuthority;
 
+/**
+ * An implementation of {@link GrantedAuthority} in the CloudWorkToken model.
+ * It defines role {@code USER} for regular CloudWork's clients
+ * and role {@code SUPERUSER} for special management routines.
+ * The enum defines no additional properties but the name of the constant itself.
+ */
 public enum Role implements GrantedAuthority {
     USER,
     SUPERUSER;
 
 
     /**
-     * If the <code>GrantedAuthority</code> can be represented as a <code>String</code>
-     * and that <code>String</code> is sufficient in precision to be relied upon for an
-     * access control decision by an {@link AccessDecisionManager} (or delegate), this
-     * method should return such a <code>String</code>.
-     * <p>
-     * If the <code>GrantedAuthority</code> cannot be expressed with sufficient precision
-     * as a <code>String</code>, <code>null</code> should be returned. Returning
-     * <code>null</code> will require an <code>AccessDecisionManager</code> (or delegate)
-     * to specifically support the <code>GrantedAuthority</code> implementation, so
-     * returning <code>null</code> should be avoided unless actually required.
+     * This <code>GrantedAuthority</code> can be represented as a <code>String</code>
+     * so this method returns a <code>String</code> equal to the name of the role.
      *
-     * @return a representation of the granted authority (or <code>null</code> if the
-     * granted authority cannot be expressed as a <code>String</code> with sufficient
-     * precision).
+     * @return a name of the granted authority.
      */
     @Override
     public String getAuthority() {
