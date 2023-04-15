@@ -29,7 +29,6 @@ public class EntranceController {
         log.trace("Controller returns {}", tokenOffer);
 
         return ResponseEntity.ok(tokenOffer);
-//        return ResponseEntity.ok(new LoginResponse("take-a-token"));
     }
 
     @PostMapping("/logout")

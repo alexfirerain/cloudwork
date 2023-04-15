@@ -1,7 +1,5 @@
 package ru.netology.cloudwork.service;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,14 +8,8 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
-import ru.netology.cloudwork.model.LoggedIn;
 import ru.netology.cloudwork.model.UserInfo;
 
-import javax.crypto.SecretKey;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
@@ -27,7 +19,7 @@ public class IdentityService implements AuthenticationManager {
 
 //    private final String signingKey = "ymLTU8Pq8aj4fmJZj60w24OrMNu1tIj4TVJ";
 
-    public String generateTokenFor(LoggedIn authentication) {
+    public String generateTokenFor(UserInfo authentication) {
 
 //        Instant moment = Instant.now();
 //        SecretKey cipher = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
@@ -39,7 +31,7 @@ public class IdentityService implements AuthenticationManager {
 //                .signWith(cipher)
 //                .compact();
 
-        return "%s@%s".formatted(authentication.getPrincipal(), new Date());
+        return "%s@%s".formatted(authentication.getUsername(), new Date());
     }
 
     /**
@@ -87,7 +79,16 @@ public class IdentityService implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        // TODO: get UserInfo by principal and test whether it will pass i.e active and mapped to a token
+        UserInfo user = (UserInfo) userManager.loadUserByUsername((String) authentication.getPrincipal());
+
+        if (!user.isEnabled())
+            throw new DisabledException("Аккаунт отключён");
+
+        if (!user.isAccountNonLocked())
+            throw new LockedException("Аккаунт заблокирован");
+
+        if (userManager.findTokenByUsername(user.getUsername()) == null)
+            throw new BadCredentialsException("Для этого юзера нет активного токена");
 
         authentication.setAuthenticated(true);
 

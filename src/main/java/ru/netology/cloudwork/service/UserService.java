@@ -42,35 +42,37 @@ public class UserService {
         String usernameRequested = loginRequest.getLogin();
         UserInfo user = (UserInfo) userManager.loadUserByUsername(usernameRequested);
 
-        LoggedIn authentication = (LoggedIn) authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(usernameRequested, loginRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        LoggedIn authentication = (LoggedIn) authenticationManager
+//                .authenticate(new UsernamePasswordAuthenticationToken(usernameRequested, loginRequest.getPassword()));
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // TODO: move this check to Identity Machine?
         if (!encoder.matches(loginRequest.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Неверный пароль.");
 
-        String token = sessions.entrySet().stream()
-                        .filter(entry -> usernameRequested.equals(entry.getValue()))
-                        .findFirst()
-                        .map(Map.Entry::getKey)
-                        .orElse(null);
+//        String token = sessions.entrySet().stream()
+//                        .filter(entry -> usernameRequested.equals(entry.getValue()))
+//                        .findFirst()
+//                        .map(Map.Entry::getKey)
+//                        .orElse(null);
+        String token = userManager.findTokenByUsername(usernameRequested);
 
         if (token == null) {
-            token = identityService.generateTokenFor(authentication);
-            sessions.put(token, usernameRequested);
+            token = identityService.generateTokenFor(user);
+            userManager.setToken(usernameRequested, token);
+//            sessions.put(token, usernameRequested);
         }
 
         return new LoginResponse(token);
     }
 
-    public String defineUsernameByToken(String token) {
-        String username = sessions.get(token);
-        if (username == null)
-            throw new AuthenticationCredentialsNotFoundException("Сессия окончена.");
-        return username;
-    }
+//    public String defineUsernameByToken(String token) {
+//        String username = sessions.get(token);
+//        if (username == null)
+//            throw new AuthenticationCredentialsNotFoundException("Сессия окончена.");
+//        return username;
+//    }
 
     public void terminateSession(String token) {
 
