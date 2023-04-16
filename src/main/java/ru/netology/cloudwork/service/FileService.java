@@ -73,4 +73,16 @@ public class FileService {
 
         return ResponseEntity.ok(new FileDto(String.valueOf(file.getHash()), file.getBody()));
     }
+
+    private long getFileIdByOwnerAndFilename(String owner, String filename) throws FileNotFoundException {
+        UserEntity user = userRepository.findByUsername(owner)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
+                                .formatted(owner)));
+        return user.getFiles().stream()
+                .filter(x -> x.getFileName().equals(filename))
+                .findFirst()
+                .map(FileEntity::getFileId)
+                .orElseThrow(() -> new FileNotFoundException("Нет файла " + filename));
+    }
 }
