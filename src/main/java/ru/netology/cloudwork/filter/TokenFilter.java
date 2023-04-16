@@ -59,6 +59,7 @@ public class TokenFilter extends OncePerRequestFilter {
 //        }
 
         UserInfo user = userManager.findUserByToken(token);
+        log.trace("User by token found: {}", user);
 
         if (user != null) {
 
