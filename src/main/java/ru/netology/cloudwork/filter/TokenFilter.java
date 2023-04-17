@@ -50,22 +50,13 @@ public class TokenFilter extends OncePerRequestFilter {
         String token = extractToken(request);
         log.trace("Token in the request filtered: " + token);
 
-//        if (token == null) {
-//            submitErrorResponse(response, "Жетон не обнаружен в заголовках.");
-//            return;
-//        } else if (!identityService.validateToken(token)) {
-//            submitErrorResponse(response, "Жетон не действителен");
-//            return;
-//        }
-
         UserInfo user = userManager.findUserByToken(token);
         log.trace("User by token found: {}", user);
 
         if (user != null) {
-
             LoggedIn auth = (LoggedIn) identityService.authenticate(new LoggedIn(user));
-
             SecurityContextHolder.getContext().setAuthentication(auth);
+            log.info("User {} set authenticated", auth.getPrincipal());
         }
 
         filterChain.doFilter(request, response);

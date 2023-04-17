@@ -2,6 +2,7 @@ package ru.netology.cloudwork.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,5 +73,13 @@ public class FileService {
                 .orElseThrow(() -> new FileNotFoundException("Нет файла " + filename));
 
         return ResponseEntity.ok(new FileDto(String.valueOf(file.getHash()), file.getBody()));
+    }
+
+    /**
+     * Shortcuts the username of the current thread.
+     * @return username of the user authenticated to operate with the current method instance.
+     */
+    private String currentUserName() {
+        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
