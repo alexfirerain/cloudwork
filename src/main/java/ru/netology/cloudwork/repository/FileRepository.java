@@ -22,10 +22,13 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
     Optional<FileEntity> findByFileId(long id);
 
     @Modifying
-    @Query("update FileEntity f set f.fileName = :newName" +
-            " WHERE f.owner.username = :owner and f.fileName = :oldName")
-    void renameFile(@Param("owner") String owner, @Param("oldName") String oldName, @Param("newName") String newName);
+    @Query("update FileEntity f set f.fileName = :newName WHERE f.owner.username = :owner and f.fileName = :oldName")
+    void renameFile(@Param("owner") String owner,
+                    @Param("oldName") String oldName,
+                    @Param("newName") String newName);
 
-//    Optional<FileEntity> findByOwnerAndAndFileName(@NotNull UserEntity owner, @NotNull String fileName);
+    @Query("select f from FileEntity f WHERE f.owner.username = :owner AND f.fileName = :fileName")
+    Optional<FileEntity> findByOwnerAndFilename(@NotNull @Param("owner") String owner,
+                                                @NotNull @Param("fileName") String fileName);
 
 }

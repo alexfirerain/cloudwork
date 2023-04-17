@@ -1,8 +1,9 @@
 package ru.netology.cloudwork.service;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileService {
 
     private UserRepository userRepository;
@@ -75,14 +77,6 @@ public class FileService {
         return ResponseEntity.ok(new FileDto(String.valueOf(file.getHash()), file.getBody()));
     }
 
-    /**
-     * Shortcuts the username of the current thread.
-     * @return username of the user authenticated to operate with the current method instance.
-     */
-    private String currentUserName() {
-        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
     private long getFileIdByOwnerAndFilename(String owner, String filename) throws FileNotFoundException {
         UserEntity user = userRepository.findByUsername(owner)
                 .orElseThrow(() ->
@@ -93,5 +87,27 @@ public class FileService {
                 .findFirst()
                 .map(FileEntity::getFileId)
                 .orElseThrow(() -> new FileNotFoundException("Нет файла " + filename));
+    }
+
+    public ResponseEntity<?> deleteFile(String owner, String filename) throws FileNotFoundException {
+        long fileId = getFileIdByOwnerAndFilename(owner, filename);
+        fileRepository.deleteById(fileId);
+        log.debug("FileServis performed deletion '{}' for {}", filename, owner);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<FileDto> serveFile(String owner, String filename) throws FileNotFoundException {
+
+        FileEntity file = fileRepository.findByOwnerAndFilename(owner, filename)
+                .orElseThrow(() -> new FileNotFoundException("Нет файла " + filename));
+        log.debug("FileService is serving file '{}' for {}", filename, owner);
+        return ResponseEntity.ok(new FileDto(String.valueOf(file.getHash()), file.getBody()));
+    }
+
+    public ResponseEntity<?> renameFile(@NotBlank String owner, @NotBlank String filename, @NotBlank String newName) throws FileNotFoundException {
+        fileRepository.findByOwnerAndFilename(owner, filename).orElseThrow(() -> new FileNotFoundException("Нет " + filename));
+        fileRepository.renameFile(owner, filename, newName);    // unique name check should be watched by DB constraints
+        log.debug("FileServis performed renaming '{}' into '{}' for {}", filename, newName, owner);
+        return ResponseEntity.ok().build();
     }
 }
