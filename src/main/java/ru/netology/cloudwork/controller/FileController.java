@@ -2,6 +2,7 @@ package ru.netology.cloudwork.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.netology.cloudwork.dto.FileInfo;
@@ -25,21 +26,30 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<FileInfo>> listFiles(Principal user,
-                                                    @RequestParam(name = "limit", defaultValue = "3") int limit) {
+    public ResponseEntity<List<FileInfo>> listFiles(@RequestParam(name = "limit", defaultValue = "3") int limit) {
+        String owner = currentUserName();
+        log.trace("Request to list {} files of {}.", limit, owner);
 
-        log.trace("Request to list {} files of {}.", limit, user.toString());
-
-        return fileService.listFiles(user.getName(), limit);
+        return fileService.listFiles(owner, limit);
 
     }
 
     @PostMapping("/file")
-    public ResponseEntity<?> uploadFile(Principal user,
-                                        @RequestParam(name = "filename") String filename,
+    public ResponseEntity<?> uploadFile(@RequestParam(name = "filename") String filename,
                                         @RequestBody MultipartFile file) throws IOException {
 
-        return fileService.storeFile(user.getName(), filename, file);
-    }   
+        return fileService.storeFile(currentUserName(), filename, file);
+    }
+
+    /**
+     * Shortcuts the username of the current thread.
+     * @return username of the user authenticated to operate with the current method instance.
+     */
+    private String currentUserName() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.trace("Threadlocal username defined: {}", username);
+        return username;
+    }
+
 
 }

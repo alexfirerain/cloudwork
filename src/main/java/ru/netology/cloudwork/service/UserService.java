@@ -42,26 +42,14 @@ public class UserService {
         String usernameRequested = loginRequest.getLogin();
         UserInfo user = (UserInfo) userManager.loadUserByUsername(usernameRequested);
 
-//        LoggedIn authentication = (LoggedIn) authenticationManager
-//                .authenticate(new UsernamePasswordAuthenticationToken(usernameRequested, loginRequest.getPassword()));
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // TODO: move this check to Identity Machine?
         if (!encoder.matches(loginRequest.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Неверный пароль.");
 
-//        String token = sessions.entrySet().stream()
-//                        .filter(entry -> usernameRequested.equals(entry.getValue()))
-//                        .findFirst()
-//                        .map(Map.Entry::getKey)
-//                        .orElse(null);
         String token = userManager.findTokenByUsername(usernameRequested);
 
         if (token == null) {
             token = identityService.generateTokenFor(user);
             userManager.setToken(usernameRequested, token);
-//            sessions.put(token, usernameRequested);
         }
 
         return new LoginResponse(token);
@@ -74,9 +62,10 @@ public class UserService {
 //        return username;
 //    }
 
-    public void terminateSession(String token) {
+    public void terminateSession(String username) {
 
-        sessions.remove(token);
+        userManager.setToken(username, null);
+
     }
 
 }

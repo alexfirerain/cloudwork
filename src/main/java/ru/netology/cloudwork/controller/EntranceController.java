@@ -34,6 +34,7 @@ public class EntranceController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(name = "auth-token") final String token) {
         log.info("Controller logging out {}", token);
+        // there probably no token needed here since username is context-determined
 
         userService.terminateSession(token);
 
