@@ -27,7 +27,7 @@ public class ErrorController {
      * The generated sequence does not persist and starts over
      * with every application run.
      */
-    private static final AtomicInteger idCount = new AtomicInteger();
+    public static final AtomicInteger idCount = new AtomicInteger();
 
 
     /**
@@ -36,7 +36,8 @@ public class ErrorController {
      * @param exception an exception being caught.
      * @return a 400 http-response with error's description and number.
      */
-    @ExceptionHandler({UsernameNotFoundException.class,
+    @ExceptionHandler({
+            UsernameNotFoundException.class,
                        BadCredentialsException.class,
                        ServletRequestBindingException.class })
     public ResponseEntity<ErrorDto> handleBadRequest(RuntimeException exception) {
@@ -68,7 +69,7 @@ public class ErrorController {
      * @return a 500 http-response with error's description and number.
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDto> handleServerError(RuntimeException exception) {
+    public ResponseEntity<ErrorDto> handleServerError(Exception exception) {
         String message = exception.getLocalizedMessage();
         log.warn("A Serverside Error exception happened: {}", message);
         return new ResponseEntity<>(

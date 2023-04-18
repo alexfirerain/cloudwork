@@ -9,6 +9,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,19 +25,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .httpBasic().disable()
-                .cors(httpSecurityCorsConfigurer -> {
-                    CorsRegistry registry = new CorsRegistry();
-
-                    registry.addMapping("/**")
-                            .allowCredentials(true)
-                            .allowedOrigins(frontHosts)
-                            .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS");
-                })
-                .csrf()
+                .httpBasic()
                 .disable()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //                .and()
+                .cors(
+//                        httpSecurityCorsConfigurer -> {
+//                    CorsRegistry registry = new CorsRegistry();
+//
+//                    registry.addMapping("/**")
+//                            .allowCredentials(true)
+//                            .allowedOrigins(frontHosts)
+//                            .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS");
+//                }
+                ).and()
+                .csrf(  )
+                .disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/login")
                 .permitAll()

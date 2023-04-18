@@ -25,13 +25,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FileService {
 
-    private UserRepository userRepository;
-    private FileRepository fileRepository;
-
-    public FileService(UserRepository userRepository, FileRepository fileRepository) {
-        this.userRepository = userRepository;
-        this.fileRepository = fileRepository;
-    }
+    private final UserRepository userRepository;
+    private final FileRepository fileRepository;
 
     public ResponseEntity<List<FileInfo>> listFiles(String username, int limit) {
         Optional<UserEntity> user = userRepository.findByUsername(username);
@@ -39,7 +34,7 @@ public class FileService {
                 new UsernameNotFoundException("Пользователь %s не зарегистрирован."
                         .formatted(username)));
 
-        List<FileInfo> files = user.get()
+        List<FileInfo> files = user.get()   
                 .getFiles().stream()
                 .limit(limit)
                 .map(FileInfo::new)

@@ -15,7 +15,8 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class IdentityService implements AuthenticationManager {
-    private UserManager userManager;
+
+    private final UserManager userManager;
 
 //    private final String signingKey = "ymLTU8Pq8aj4fmJZj60w24OrMNu1tIj4TVJ";
 

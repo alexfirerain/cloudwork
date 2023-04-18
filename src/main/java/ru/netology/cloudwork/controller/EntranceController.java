@@ -3,6 +3,7 @@ package ru.netology.cloudwork.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.netology.cloudwork.dto.LoginResponse;
 import ru.netology.cloudwork.dto.LoginRequest;
@@ -36,10 +37,21 @@ public class EntranceController {
         log.info("Controller logging out {}", token);
         // there probably no token needed here since username is context-determined
 
-        userService.terminateSession(token);
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        userService.terminateSession(username);
 
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout() {
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<?> loginLogout() {
+        return ResponseEntity.ok().build();
+    }
 
 }

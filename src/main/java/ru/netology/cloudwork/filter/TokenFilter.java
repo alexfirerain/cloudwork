@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,8 +26,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
-    static final String TOKEN_HEADER = "token-auth";
-    static final String TOKEN_PREFIX = "bearer ";
+    static final String TOKEN_HEADER = "auth-token";
+    static final String TOKEN_PREFIX = "Bearer ";
     ObjectMapper objectMapper = new ObjectMapper();
 
     private final ErrorController errorController;
@@ -48,27 +47,32 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = extractToken(request);
-        log.trace("Token in the request filtered: " + token);
+        log.debug("Token in the request filtered: " + token);
 
-        UserInfo user = userManager.findUserByToken(token);
-        log.trace("User by token found: {}", user);
+        if (token != null) {
+            UserInfo user = userManager.findUserByToken(token);
 
-        if (user != null) {
-            LoggedIn auth = (LoggedIn) identityService.authenticate(new LoggedIn(user));
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            log.info("User {} set authenticated", auth.getPrincipal());
+            if (user == null) {
+                log.warn("No mapped user, invalid token met");
+                submitAuthErrorResponse(response, "*етон не принадлежит активной сессии CloudWork");
+            } else {
+                log.debug("User by token found: {}", user.getUsername());
+                LoggedIn auth = (LoggedIn) identityService.authenticate(new LoggedIn(user));
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info("User {} set authenticated", auth.getPrincipal());
+            }
         }
 
         filterChain.doFilter(request, response);
     }
 
-//    private void submitErrorResponse(HttpServletResponse response, String errorMsg) throws IOException {
-//        ResponseEntity<ErrorDto> errorResponse = errorController
-//                .handleBadRequest(new AuthenticationCredentialsNotFoundException(errorMsg));
-//        response.setStatus(errorResponse.getStatusCode().value());
-//        ErrorDto body = errorResponse.getBody();
-//        response.getOutputStream().println(objectMapper.writeValueAsString(body));
-//    }
+    private void submitAuthErrorResponse(HttpServletResponse response, String errorMsg) throws IOException {
+        ResponseEntity<ErrorDto> errorResponse = errorController
+                .handleAuthorizationFailure(new AuthenticationCredentialsNotFoundException(errorMsg));
+        response.setStatus(errorResponse.getStatusCode().value());
+        ErrorDto body = errorResponse.getBody();
+        response.getOutputStream().println(objectMapper.writeValueAsString(body));
+    }
 
     /**
      * Extracts from the request a matter of token in {@link #TOKEN_HEADER}

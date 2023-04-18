@@ -71,7 +71,7 @@ public class FileController {
      */
     private String currentUserName() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.debug("Threadlocal username defined: {}", username);
+        log.debug("Thread-local username defined: {}", username);
         return username;
     }
 

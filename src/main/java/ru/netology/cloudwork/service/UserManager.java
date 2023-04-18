@@ -81,9 +81,9 @@ public class UserManager implements UserDetailsService {
                 .orElse(null);
     }
 
-    public String findTokenByUsername(String usernameRequested) {
-        UserEntity user = userRepository.findByUsername(usernameRequested)
-                .orElseThrow(() -> new UsernameNotFoundException("Юзернейм не найден: " + usernameRequested));
+    public String findTokenByUsername(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Юзернейм не найден: " + username));
         return user.getAccessToken();
     }
 
