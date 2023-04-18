@@ -13,7 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import ru.netology.cloudwork.filter.TokenFilter;
 import ru.netology.cloudwork.service.UserManager;
 
 @Configuration
@@ -22,6 +24,9 @@ import ru.netology.cloudwork.service.UserManager;
 public class SecurityConfig {
     @Value("${application.front-url}")
     String[] frontHosts;
+
+    private final TokenFilter tokenFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -40,8 +45,10 @@ public class SecurityConfig {
                 ).and()
                 .csrf(  )
                 .disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/login")
                 .permitAll()
@@ -62,9 +69,6 @@ public class SecurityConfig {
 //    }
 
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
 }

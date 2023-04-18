@@ -29,10 +29,10 @@ public class UserService {
     /**
      * Mappings between token and username.
      */
-    private final Map<String, String> sessions = new ConcurrentHashMap<>(); // can be SQL-saved
+//    private final Map<String, String> sessions = new ConcurrentHashMap<>(); // can be SQL-saved
     private final IdentityService identityService;
     private final PasswordEncoder encoder;
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
     private final UserManager userManager;
 
 
@@ -40,15 +40,21 @@ public class UserService {
 
     public LoginResponse initializeSession(LoginRequest loginRequest) {
         String usernameRequested = loginRequest.getLogin();
+        log.trace("Logging {} in", usernameRequested);
         UserInfo user = (UserInfo) userManager.loadUserByUsername(usernameRequested);
 
-        if (!encoder.matches(loginRequest.getPassword(), user.getPassword()))
+        if (!encoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            log.trace("Password provided makes no match");
             throw new BadCredentialsException("Неверный пароль.");
+        }
 
+        // if user has seemingly been logged in and token already exists, it gets reused.
+        // might be not very secure
         String token = userManager.findTokenByUsername(usernameRequested);
 
         if (token == null) {
             token = identityService.generateTokenFor(user);
+            log.debug("Token {} generated for {}", token, usernameRequested);
             userManager.setToken(usernameRequested, token);
         }
 

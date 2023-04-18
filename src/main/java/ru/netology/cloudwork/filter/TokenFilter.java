@@ -54,7 +54,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
             if (user == null) {
                 log.warn("No mapped user, invalid token met");
-                submitAuthErrorResponse(response, "*етон не принадлежит активной сессии CloudWork");
+                submitAuthErrorResponse(response, "Жетон не принадлежит активной сессии CloudWork");
             } else {
                 log.debug("User by token found: {}", user.getUsername());
                 LoggedIn auth = (LoggedIn) identityService.authenticate(new LoggedIn(user));
@@ -70,8 +70,9 @@ public class TokenFilter extends OncePerRequestFilter {
         ResponseEntity<ErrorDto> errorResponse = errorController
                 .handleAuthorizationFailure(new AuthenticationCredentialsNotFoundException(errorMsg));
         response.setStatus(errorResponse.getStatusCode().value());
+        response.setCharacterEncoding("UTF-8");
         ErrorDto body = errorResponse.getBody();
-        response.getOutputStream().println(objectMapper.writeValueAsString(body));
+        response.getWriter().println(objectMapper.writeValueAsString(body));
     }
 
     /**

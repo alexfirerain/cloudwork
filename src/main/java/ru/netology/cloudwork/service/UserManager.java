@@ -89,5 +89,6 @@ public class UserManager implements UserDetailsService {
 
     public void setToken(String username, String token) {
         userRepository.setAccessToken(username, token);
+        log.debug("Token {} mapped and stored for user {}", token, username);
     }
 }

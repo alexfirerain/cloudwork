@@ -41,6 +41,7 @@ public class EntranceController {
 
         userService.terminateSession(username);
 
+        log.debug("Controller sends OK to log {} out", username);
         return ResponseEntity.ok().build();
     }
 
