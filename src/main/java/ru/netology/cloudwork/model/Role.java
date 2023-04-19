@@ -1,6 +1,5 @@
 package ru.netology.cloudwork.model;
 
-import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.core.GrantedAuthority;
 
 /**

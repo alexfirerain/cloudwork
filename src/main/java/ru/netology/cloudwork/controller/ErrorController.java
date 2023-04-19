@@ -16,8 +16,8 @@ import ru.netology.cloudwork.dto.ErrorDto;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A general controller designed to intercept and handle
- * every exceptional events in the CloudWork.
+ * This wise ErrorController is designed to help all CloudWork beans cope with troubles.
+ * It will intercept and handle every exceptional event in the CloudWork.
  */
 @ControllerAdvice
 @Slf4j

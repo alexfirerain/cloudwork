@@ -16,7 +16,9 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * The controller to handle file-related operations.
+ * The controller to handle file-related operations against {@code the Specification}.
+ * It defines thread-local username down and addresses {@link FileService} with
+ * requests defined as file name and owner (client).
  */
 @RestController
 @Slf4j
@@ -40,21 +42,21 @@ public class FileController {
     public ResponseEntity<?> uploadFile(@RequestParam(name = "filename") String filename,
                                         @RequestBody MultipartFile file) throws IOException {
         String client = currentUserName();
-        log.info("Reqested file uploading: '{}' for {}", filename, client);
+        log.info("Requested file uploading: '{}' for {}", filename, client);
         return fileService.storeFile(client, filename, file);
     }
 
     @DeleteMapping("/file")
     public ResponseEntity<?> deleteFile(@RequestParam(name = "filename") String filename) throws FileNotFoundException {
         String client = currentUserName();
-        log.info("Reqested file deletion: '{}' for {}", filename, client);
+        log.info("Requested file deletion: '{}' for {}", filename, client);
         return fileService.deleteFile(client, filename);
     }
 
     @GetMapping("/file")
     public ResponseEntity<FileDto> downloadFile(@RequestParam(name = "filename") String filename) throws FileNotFoundException {
         String client = currentUserName();
-        log.info("Reqested file downloading: '{}' for {}", filename, client);
+        log.info("Requested file downloading: '{}' for {}", filename, client);
         return fileService.serveFile(client, filename);
     }
 
@@ -62,7 +64,7 @@ public class FileController {
     public ResponseEntity<?> renameFile(@RequestParam(name = "filename") String filename,
                                         @RequestBody RenameRequest newName) throws FileNotFoundException {
         String client = currentUserName();
-        log.info("Reqested file renaming: '{}' into '{}' for {}", filename, newName.getName(), client);
+        log.info("Requested file renaming: '{}' into '{}' for {}", filename, newName.getName(), client);
         return fileService.renameFile(client, filename, newName.getName());
     }
     /**
