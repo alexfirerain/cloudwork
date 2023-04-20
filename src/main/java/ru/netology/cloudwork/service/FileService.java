@@ -66,6 +66,8 @@ public class FileService {
      */
     public ResponseEntity<?> storeFile(String username, String filename, MultipartFile file) throws IOException {
 
+        log.debug("FileService received file {}", file.toString());
+
         UserEntity owner = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Пользователь %s не зарегистрирован."

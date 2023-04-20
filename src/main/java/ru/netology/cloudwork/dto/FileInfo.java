@@ -12,7 +12,7 @@ import ru.netology.cloudwork.entity.FileEntity;
 @Getter
 @AllArgsConstructor
 public class FileInfo {
-    private String name;
+    private String filename;
     private long size;
 
     /**
@@ -20,7 +20,7 @@ public class FileInfo {
      * @param fileEntity    a file entity in DB-format.
      */
     public FileInfo(@NotNull FileEntity fileEntity) {
-        this.name = fileEntity.getFileName();
+        this.filename = fileEntity.getFileName();
         this.size = fileEntity.getSize();
     }
 }

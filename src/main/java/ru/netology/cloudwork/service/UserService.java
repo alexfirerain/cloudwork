@@ -8,6 +8,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.netology.cloudwork.dto.LoginRequest;
@@ -36,8 +37,15 @@ public class UserService {
     private final UserManager userManager;
 
 
-
-
+    /**
+     * Tries to open user session by verifying the username and password,
+     * then asks the identity service to generate a token for the newcomer.
+     * Or sends back the existing token if the user already logged.
+     * @param loginRequest a DTO containing login information.
+     * @return  a DTO with token for user to use.
+     * @throws UsernameNotFoundException if login received not known.
+     * @throws BadCredentialsException if known password for that login doesn't match.
+     */
     public LoginResponse initializeSession(LoginRequest loginRequest) {
         String usernameRequested = loginRequest.getLogin();
         log.trace("Logging {} in", usernameRequested);

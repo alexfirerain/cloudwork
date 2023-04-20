@@ -45,7 +45,9 @@ public class TokenFilter extends OncePerRequestFilter {
      * @throws IOException  probably when physical troubles come.
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         String token = extractToken(request);
         log.debug("Token in the request filtered: " + token);
 
@@ -67,12 +69,14 @@ public class TokenFilter extends OncePerRequestFilter {
     }
 
     private void submitAuthErrorResponse(HttpServletResponse response, String errorMsg) throws IOException {
+        log.debug("Trying to send error from filter");
         ResponseEntity<ErrorDto> errorResponse = errorController
                 .handleAuthorizationFailure(new AuthenticationCredentialsNotFoundException(errorMsg));
         response.setStatus(errorResponse.getStatusCode().value());
+        log.debug("Response status: {}", errorResponse.getStatusCode());
         response.setCharacterEncoding("UTF-8");
-        ErrorDto body = errorResponse.getBody();
-        response.getWriter().println(objectMapper.writeValueAsString(body));
+        response.getWriter().println(
+                objectMapper.writeValueAsString(errorResponse.getBody()));
     }
 
     /**

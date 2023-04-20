@@ -41,7 +41,8 @@ public class FileEntity {
     @ManyToOne
     private UserEntity owner;
 
-    @Lob @Basic(fetch = LAZY)
+    @Lob
+//    @Basic(fetch = LAZY)
     private byte[] body;
 
     public FileEntity(MultipartFile file, UserEntity owner) throws IOException {
