@@ -7,10 +7,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.netology.cloudwork.controller.ErrorController;
 import ru.netology.cloudwork.dto.ErrorDto;
@@ -34,6 +39,8 @@ public class TokenFilter extends OncePerRequestFilter {
     private final IdentityService identityService;
     private final UserManager userManager;
 
+
+
     /**
      * Looks through incoming requests for tokens in their {@link #TOKEN_HEADER}.
      * When it finds no token, bypasses the request.
@@ -54,14 +61,21 @@ public class TokenFilter extends OncePerRequestFilter {
         if (token != null) {
             UserInfo user = userManager.findUserByToken(token);
 
-            if (user == null) {
-                log.warn("No mapped user, invalid token met");
-                submitAuthErrorResponse(response, "Жетон не принадлежит активной сессии CloudWork");
-            } else {
-                log.debug("User by token found: {}", user.getUsername());
+            try {
+                if (user == null) {
+                    log.warn("No mapped user, invalid token met");
+                    throw new BadCredentialsException("Жетон не принадлежит активной сессии CloudWork");
+                }
+                log.trace("User by token found: {}", user.getUsername());
                 LoggedIn auth = (LoggedIn) identityService.authenticate(new LoggedIn(user));
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 log.info("User {} set authenticated", auth.getPrincipal());
+            } catch (AuthenticationException e) {
+                response.setStatus(401);
+//                response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                objectMapper.writeValue(response.getOutputStream(),
+                        new ErrorDto(e.getLocalizedMessage(), ErrorController.nextErrorId()));
+
             }
         }
 
@@ -91,5 +105,13 @@ public class TokenFilter extends OncePerRequestFilter {
 
         return token == null || token.isBlank() || !token.startsWith(TOKEN_PREFIX) ?
                 null : token.substring(TOKEN_PREFIX.length());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorDto> handleAuthorizationFailure(RuntimeException exception) {
+        String message = exception.getLocalizedMessage();
+        log.warn("An Authorization exception in the filter: {}", message);
+        return ResponseEntity.status(401).body(
+                new ErrorDto(message, ErrorController.nextErrorId()));
     }
 }

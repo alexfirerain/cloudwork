@@ -24,13 +24,13 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 10MB      # 128 Мб
-      max-request-size: 10MB
+      max-file-size: 100MB      # 128 Мб
+      max-request-size: 100MB
 
 logging:
   level:
     org.springframework: INFO
-    ru.netology: TRACE
+    ru.netology: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
     file: "%d %p %c{1.} [%t] %m%n"

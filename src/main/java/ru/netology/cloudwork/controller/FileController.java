@@ -1,18 +1,17 @@
 package ru.netology.cloudwork.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.netology.cloudwork.dto.FileDto;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.dto.RenameRequest;
 import ru.netology.cloudwork.service.FileService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 
 /**
@@ -54,7 +53,7 @@ public class FileController {
     }
 
     @GetMapping("/file")
-    public ResponseEntity<FileDto> downloadFile(@RequestParam(name = "filename") String filename) throws FileNotFoundException {
+    public ResponseEntity<byte[]> downloadFile(@RequestParam(name = "filename") String filename) throws FileNotFoundException {
         String client = currentUserName();
         log.info("Requested file downloading: '{}' for {}", filename, client);
         return fileService.serveFile(client, filename);
@@ -62,7 +61,7 @@ public class FileController {
 
     @PutMapping("/file")
     public ResponseEntity<?> renameFile(@RequestParam(name = "filename") String filename,
-                                        @RequestBody RenameRequest newName) throws FileNotFoundException {
+                                        @RequestBody @Valid RenameRequest newName) throws FileNotFoundException {
         String client = currentUserName();
         log.info("Requested file renaming: '{}' into '{}' for {}", filename, newName.getName(), client);
         return fileService.renameFile(client, filename, newName.getName());

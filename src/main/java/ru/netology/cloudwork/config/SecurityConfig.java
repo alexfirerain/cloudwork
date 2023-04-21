@@ -30,8 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .httpBasic()
-                .disable()
+                .httpBasic().disable()
 //                .and()
                 .cors(
 //                        httpSecurityCorsConfigurer -> {
@@ -42,20 +41,15 @@ public class SecurityConfig {
 //                            .allowedOrigins(frontHosts)
 //                            .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS");
 //                }
-                ).and()
-                .csrf(  )
-                .disable()
+                )
+                .and().csrf().disable()
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
-
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //                .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/login")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .build();
+                .requestMatchers("/login").permitAll()
+                .anyRequest().authenticated()
+                .and().build();
 
     }
 

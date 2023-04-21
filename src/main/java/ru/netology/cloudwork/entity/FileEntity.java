@@ -33,7 +33,7 @@ public class FileEntity {
     @PositiveOrZero
     private Long size;
 
-    private int hash;
+    private int hash;   // TODO: remove it to where it came
 
     private String fileType;
 
@@ -41,8 +41,9 @@ public class FileEntity {
     @ManyToOne
     private UserEntity owner;
 
-    @Lob
 //    @Basic(fetch = LAZY)
+    @Lob
+    @Column(columnDefinition = "LONGBLOB NOT NULL")
     private byte[] body;
 
     public FileEntity(MultipartFile file, UserEntity owner) throws IOException {

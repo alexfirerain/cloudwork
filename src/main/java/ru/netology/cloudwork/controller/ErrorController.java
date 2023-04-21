@@ -27,8 +27,11 @@ public class ErrorController {
      * The generated sequence does not persist and starts over
      * with every application run.
      */
-    public static final AtomicInteger idCount = new AtomicInteger();
+    private static final AtomicInteger idCount = new AtomicInteger();
 
+    public static int nextErrorId() {
+        return idCount.getAndIncrement();
+    }
 
     /**
      * Handles situations when there's a bad request, username not found
@@ -44,7 +47,7 @@ public class ErrorController {
         String message = exception.getLocalizedMessage();
         log.warn("A Bad-Request exception happened: {}", message);
         return new ResponseEntity<>(
-                new ErrorDto(message, idCount.getAndIncrement()),
+                new ErrorDto(message, nextErrorId()),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -59,7 +62,7 @@ public class ErrorController {
         String message = exception.getLocalizedMessage();
         log.warn("An Authorization exception happened: {}", message);
         return new ResponseEntity<>(
-                new ErrorDto(message, idCount.getAndIncrement()),
+                new ErrorDto(message, nextErrorId()),
                 HttpStatus.UNAUTHORIZED);
     }
 
@@ -73,7 +76,7 @@ public class ErrorController {
         String message = exception.getLocalizedMessage();
         log.warn("A Serverside Error exception happened: {}", message);
         return new ResponseEntity<>(
-                new ErrorDto(message, idCount.getAndIncrement()),
+                new ErrorDto(message, nextErrorId()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
