@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -35,7 +36,6 @@ public class TokenFilter extends OncePerRequestFilter {
     static final String TOKEN_PREFIX = "Bearer ";
     ObjectMapper objectMapper = new ObjectMapper();
 
-    private final ErrorController errorController;
     private final IdentityService identityService;
     private final UserManager userManager;
 
@@ -73,8 +73,9 @@ public class TokenFilter extends OncePerRequestFilter {
             } catch (AuthenticationException e) {
                 response.setStatus(401);
 //                response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                response.setCharacterEncoding("UTF-8");
                 objectMapper.writeValue(response.getOutputStream(),
-                        new ErrorDto(e.getLocalizedMessage(), ErrorController.nextErrorId()));
+                        new ErrorDto(e));
 
             }
         }
@@ -84,13 +85,11 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private void submitAuthErrorResponse(HttpServletResponse response, String errorMsg) throws IOException {
         log.debug("Trying to send error from filter");
-        ResponseEntity<ErrorDto> errorResponse = errorController
-                .handleAuthorizationFailure(new AuthenticationCredentialsNotFoundException(errorMsg));
-        response.setStatus(errorResponse.getStatusCode().value());
-        log.debug("Response status: {}", errorResponse.getStatusCode());
+        response.setStatus(401);
+        log.debug("Response status: {}", response.getStatus());
         response.setCharacterEncoding("UTF-8");
         response.getWriter().println(
-                objectMapper.writeValueAsString(errorResponse.getBody()));
+                objectMapper.writeValueAsString(new ErrorDto(errorMsg)));
     }
 
     /**
@@ -112,6 +111,6 @@ public class TokenFilter extends OncePerRequestFilter {
         String message = exception.getLocalizedMessage();
         log.warn("An Authorization exception in the filter: {}", message);
         return ResponseEntity.status(401).body(
-                new ErrorDto(message, ErrorController.nextErrorId()));
+                new ErrorDto(message));
     }
 }

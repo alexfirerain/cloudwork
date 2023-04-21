@@ -47,7 +47,7 @@ public class ErrorController {
         String message = exception.getLocalizedMessage();
         log.warn("A Bad-Request exception happened: {}", message);
         return new ResponseEntity<>(
-                new ErrorDto(message, nextErrorId()),
+                new ErrorDto(message),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -62,7 +62,7 @@ public class ErrorController {
         String message = exception.getLocalizedMessage();
         log.warn("An Authorization exception happened: {}", message);
         return new ResponseEntity<>(
-                new ErrorDto(message, nextErrorId()),
+                new ErrorDto(message),
                 HttpStatus.UNAUTHORIZED);
     }
 
@@ -76,7 +76,7 @@ public class ErrorController {
         String message = exception.getLocalizedMessage();
         log.warn("A Serverside Error exception happened: {}", message);
         return new ResponseEntity<>(
-                new ErrorDto(message, nextErrorId()),
+                new ErrorDto(message),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
