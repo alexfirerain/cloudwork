@@ -32,14 +32,14 @@ public class EntranceController {
         return ResponseEntity.ok(tokenOffer);
     }
 
-    @PostMapping("/login?logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout() {
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("Controller logging out for {}", username);
-        // there probably no token needed here since username is context-determined
 
         userService.terminateSession(username);
+        SecurityContextHolder.clearContext();
 
         log.debug("Controller sends OK to log {} out", username);
         return ResponseEntity.ok().build();
@@ -50,9 +50,10 @@ public class EntranceController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @GetMapping("/login?logout")
+    @GetMapping("/login")
     public ResponseEntity<?> loginLogout() {
         log.info("Logging out for {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//        SecurityContextHolder.clearContext();
         return ResponseEntity.ok().build();
     }
 

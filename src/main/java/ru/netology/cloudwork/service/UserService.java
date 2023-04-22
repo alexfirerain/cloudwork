@@ -2,22 +2,15 @@ package ru.netology.cloudwork.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.dto.LoginResponse;
-import ru.netology.cloudwork.model.LoggedIn;
 import ru.netology.cloudwork.model.UserInfo;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Date;
 
 /**
  * A manager for user tokens and sessions.
@@ -27,20 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class UserService {
 
-    /**
-     * Mappings between token and username.
-     */
-//    private final Map<String, String> sessions = new ConcurrentHashMap<>(); // can be SQL-saved
-    private final IdentityService identityService;
     private final PasswordEncoder encoder;
-//    private final AuthenticationManager authenticationManager;
     private final UserManager userManager;
 
 
     /**
      * Tries to open user session by verifying the username and password,
-     * then asks the identity service to generate a token for the newcomer.
-     * Or sends back the existing token if the user already logged.
+     * then generates a token for the newcomer and returns it,
+     * or uses the existing token
+     * if the user was already logged and did not exit.
      * @param loginRequest a DTO containing login information.
      * @return  a DTO with token for user to use.
      * @throws UsernameNotFoundException if login received not known.
@@ -61,7 +49,7 @@ public class UserService {
         String token = userManager.findTokenByUsername(usernameRequested);
 
         if (token == null) {
-            token = identityService.generateTokenFor(user);
+            token = generateTokenFor(user);
             log.debug("Token {} generated for {}", token, usernameRequested);
             userManager.setToken(usernameRequested, token);
         }
@@ -69,17 +57,17 @@ public class UserService {
         return new LoginResponse(token);
     }
 
-//    public String defineUsernameByToken(String token) {
-//        String username = sessions.get(token);
-//        if (username == null)
-//            throw new AuthenticationCredentialsNotFoundException("Сессия окончена.");
-//        return username;
-//    }
 
     public void terminateSession(String username) {
 
         userManager.setToken(username, null);
 
+    }
+
+    private String generateTokenFor(UserInfo authentication) {
+        String token = "%s@%s".formatted(authentication.getUsername(), new Date());
+        log.trace("Token '{}' generated", token);
+        return token;
     }
 
 }

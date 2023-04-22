@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.netology.cloudwork.dto.FileDto;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.entity.FileEntity;
 import ru.netology.cloudwork.entity.UserEntity;
@@ -109,21 +108,21 @@ public class FileService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<FileDto> getFile(String username, String filename) throws FileNotFoundException {
-
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
-                                .formatted(username)));
-
-        FileEntity file = user.getFiles().stream()
-                .filter(x -> x.getFileName().equals(filename))
-                .findFirst()
-                .orElseThrow(() -> new FileNotFoundException("Нет файла " + filename));
-        log.debug("FileService served file {} from database", filename);
-
-        return ResponseEntity.ok(new FileDto(String.valueOf(file.getHash()), file.getBody()));
-    }
+//    public ResponseEntity<FileDto> getFile(String username, String filename) throws FileNotFoundException {
+//
+//        UserEntity user = userRepository.findByUsername(username)
+//                .orElseThrow(() ->
+//                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
+//                                .formatted(username)));
+//
+//        FileEntity file = user.getFiles().stream()
+//                .filter(x -> x.getFileName().equals(filename))
+//                .findFirst()
+//                .orElseThrow(() -> new FileNotFoundException("Нет файла " + filename));
+//        log.debug("FileService served file {} from database", filename);
+//
+//        return ResponseEntity.ok(new FileDto(String.valueOf(file.getHash()), file.getBody()));
+//    }
 
     private long getFileIdByOwnerAndFilename(String owner, String filename) throws FileNotFoundException {
         UserEntity user = userRepository.findByUsername(owner)

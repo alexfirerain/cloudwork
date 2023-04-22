@@ -1,6 +1,7 @@
 package ru.netology.cloudwork.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,16 +22,20 @@ import java.util.List;
  */
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class FileController {
 
+    /**
+     * The Service this controller addresses to to perform file business.
+     */
     private final FileService fileService;
 
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
+//    public FileController(FileService fileService) {
+//        this.fileService = fileService;
+//    }
 
     @GetMapping("/list")
-    public ResponseEntity<List<FileInfo>> listFiles(@RequestParam(name = "limit", defaultValue = "3") int limit) {
+    public ResponseEntity<List<FileInfo>> listFiles(@RequestParam(name = "limit", defaultValue = "5") int limit) {
         String client = currentUserName();
         log.info("Requested listing {} files for {}.", limit, client);
         return fileService.listFiles(client, limit);
@@ -40,7 +45,7 @@ public class FileController {
     @PostMapping("/file")
     public ResponseEntity<?> uploadFile(@RequestParam(name = "filename") String filename,
                                         @RequestBody MultipartFile file) throws IOException {
-        String client = currentUserName();
+        String client = currentUserName();  // TODO: there must be smarter way to do it with principal
         log.info("Requested file uploading: '{}' for {}", filename, client);
         return fileService.storeFile(client, filename, file);
     }
@@ -72,7 +77,7 @@ public class FileController {
      */
     private String currentUserName() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.debug("Thread-local username defined: {}", username);
+        log.trace("Thread-local username defined: {}", username);
         return username;
     }
 
