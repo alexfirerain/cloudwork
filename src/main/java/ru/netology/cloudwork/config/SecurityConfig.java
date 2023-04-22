@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import ru.netology.cloudwork.filter.ExceptionHandlerFilter;
 import ru.netology.cloudwork.filter.TokenFilter;
 import ru.netology.cloudwork.service.UserManager;
 
@@ -23,9 +24,10 @@ import ru.netology.cloudwork.service.UserManager;
 @RequiredArgsConstructor
 public class SecurityConfig {
     @Value("${application.front-url}")
-    String[] frontHosts;
+    static String[] frontHosts;
 
     private final TokenFilter tokenFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,11 +46,17 @@ public class SecurityConfig {
                 )
                 .and().csrf().disable()
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, TokenFilter.class)
+
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/login").permitAll()
                 .anyRequest().authenticated()
+//                .logout(logout -> logout.permitAll()
+//                        .logoutSuccessHandler((request1, response, authentication) -> {
+//                            response.setStatus(HttpServletResponse.SC_OK);
+//                        }))
                 .and().build();
 
     }

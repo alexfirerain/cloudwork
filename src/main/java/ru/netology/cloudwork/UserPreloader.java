@@ -25,7 +25,8 @@ public class UserPreloader implements CommandLineRunner {
 
     List<UserEntity> users = List.of(
         // add your users here
-        new UserEntity("user", "0000")
+        new UserEntity("user", "0000"),
+        new UserEntity("who_user", "1111")
     );
 
     @Override

@@ -18,14 +18,14 @@ spring:
     enabled: false
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: create
 
   servlet:
     multipart:
-      max-file-size: 100MB      # 128 Мб
-      max-request-size: 100MB
+      max-file-size: 777MB      # 128 Мб
+      max-request-size: 777MB
 
 logging:
   level:
@@ -42,4 +42,5 @@ application:
     enabled: true
   front-url: >
     "http://localhost:8080",
-    "http://localhost:8081"
+    "http://localhost:8081",
+    "http://localhost:9090"

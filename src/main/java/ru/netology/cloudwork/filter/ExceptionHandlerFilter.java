@@ -6,14 +6,17 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.netology.cloudwork.dto.ErrorDto;
 
 import java.io.IOException;
 
+@Component
+@Slf4j
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
-    // TODO: попробовать подрубить его в цепь
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
@@ -24,7 +27,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             ErrorDto errorResponse = new ErrorDto(e);
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setCharacterEncoding("UTF-8");
             response.getWriter().write(convertObjectToJson(errorResponse));
+            log.debug("ExceptionHandlerFilter did his gracious job: {}", e.getMessage());
     }
 }
 

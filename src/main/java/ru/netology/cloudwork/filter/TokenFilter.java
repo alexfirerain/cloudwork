@@ -61,7 +61,7 @@ public class TokenFilter extends OncePerRequestFilter {
         if (token != null) {
             UserInfo user = userManager.findUserByToken(token);
 
-            try {
+//            try {
                 if (user == null) {
                     log.warn("No mapped user, invalid token met");
                     throw new BadCredentialsException("Жетон не принадлежит активной сессии CloudWork");
@@ -70,14 +70,14 @@ public class TokenFilter extends OncePerRequestFilter {
                 LoggedIn auth = (LoggedIn) identityService.authenticate(new LoggedIn(user));
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 log.info("User {} set authenticated", auth.getPrincipal());
-            } catch (AuthenticationException e) {
-                response.setStatus(401);
-//                response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                response.setCharacterEncoding("UTF-8");
-                objectMapper.writeValue(response.getOutputStream(),
-                        new ErrorDto(e));
-
-            }
+//            } catch (AuthenticationException e) {
+//                response.setStatus(401);
+////                response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+//                response.setCharacterEncoding("UTF-8");
+//                objectMapper.writeValue(response.getOutputStream(),
+//                        new ErrorDto(e));
+//
+//            }
         }
 
         filterChain.doFilter(request, response);
@@ -106,11 +106,11 @@ public class TokenFilter extends OncePerRequestFilter {
                 null : token.substring(TOKEN_PREFIX.length());
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorDto> handleAuthorizationFailure(RuntimeException exception) {
-        String message = exception.getLocalizedMessage();
-        log.warn("An Authorization exception in the filter: {}", message);
-        return ResponseEntity.status(401).body(
-                new ErrorDto(message));
-    }
+//    @ExceptionHandler(AuthenticationException.class)
+//    public ResponseEntity<ErrorDto> handleAuthorizationFailure(RuntimeException exception) {
+//        String message = exception.getLocalizedMessage();
+//        log.warn("An Authorization exception in the filter: {}", message);
+//        return ResponseEntity.status(401).body(
+//                new ErrorDto(message));
+//    }
 }
