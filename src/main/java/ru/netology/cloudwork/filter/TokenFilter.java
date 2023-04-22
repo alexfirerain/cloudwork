@@ -57,7 +57,7 @@ public class TokenFilter extends OncePerRequestFilter {
             log.trace("User by token found: {}", user.getUsername());
             LoggedIn auth = (LoggedIn) authChecker.authenticate(new LoggedIn(user));
             SecurityContextHolder.getContext().setAuthentication(auth);
-            log.info("User {} set authenticated", auth.getPrincipal());
+            log.debug("User {} set authenticated", auth.getPrincipal());
         }
 
         filterChain.doFilter(request, response);

@@ -7,6 +7,6 @@ import org.springframework.validation.annotation.Validated;
 @Data
 @Validated
 public class RenameRequest {
-    @NotBlank(message = "во что переименовать?")
-    private String name;
+    @NotBlank(message = "во что переименовывать?")
+    private String filename;
 }

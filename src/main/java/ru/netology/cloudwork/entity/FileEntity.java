@@ -33,32 +33,20 @@ public class FileEntity {
     @PositiveOrZero
     private Long size;
 
-    private int hash;   // TODO: remove it to where it came
-
     private String fileType;
 
     @NotNull
     @ManyToOne
     private UserEntity owner;
 
-//    @Basic(fetch = LAZY)
     @Lob
+    @Basic(fetch = LAZY)
     @Column(columnDefinition = "LONGBLOB NOT NULL")
     private byte[] body;
-
-    public FileEntity(MultipartFile file, UserEntity owner) throws IOException {
-        this.fileName = file.getOriginalFilename();
-        this.size = file.getSize();
-        this.hash = file.hashCode();
-        this.fileType = file.getContentType();
-        this.owner = owner;
-        this.body = file.getBytes();
-    }
 
     public FileEntity(UserEntity owner, String fileName, MultipartFile file) throws IOException {
         this.fileName = fileName;
         this.size = file.getSize();
-        this.hash = file.hashCode();
         this.fileType = file.getContentType();
         this.owner = owner;
         this.body = file.getBytes();

@@ -8,23 +8,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.netology.cloudwork.entity.FileEntity;
-import ru.netology.cloudwork.entity.UserEntity;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * The FileRepository is ruling in the Kingdom of Files.
  * Files are stored in some kind of DataBase, but JPA magic does not care
- * of its actual implementation since it masters the art of SpEL.
+ * of its actual implementation since it masters the art of HQL.
  */
 @Repository
 @Transactional
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
-
-    List<FileEntity> findByOwner(@NotNull UserEntity owner);
-
-    Optional<FileEntity> findByFileId(long id);
 
     /**
      * Spells the cast to change a file's name to whatever you want
@@ -34,10 +28,22 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      * @param newName   a name the file will bear from now on.
      */
     @Modifying
-    @Query("update FileEntity f set f.fileName = :newName WHERE f.owner.username = :owner and f.fileName = :oldName")
-    void renameFile(@Param("owner") String owner,
-                    @Param("oldName") String oldName,
-                    @Param("newName") String newName);
+    @Query("update FileEntity f set f.fileName = :newName WHERE f.owner.username = :owner AND f.fileName = :oldName")
+    void renameFile(@NotNull @Param("owner") String owner,      // why does this query not work?!
+                    @NotNull @Param("oldName") String oldName,
+                    @NotNull @Param("newName") String newName);
+
+    /**
+     * Spells the cast to change a file's name to whatever you want
+     * when you just know its id.
+     * @param id    id of the file in concern.
+     * @param newName   a name the file will bear from now on.
+     */
+    @Modifying
+    @Query("update FileEntity f set f.fileName = :newName WHERE f.fileId = :id")
+    void renameFile(@NotNull @Param("id") long id,
+                    @NotNull @Param("newName") String newName);
+
 
     /**
      * Spells the cast to obtain a file when you know its name and owner.

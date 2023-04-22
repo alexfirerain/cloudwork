@@ -68,8 +68,8 @@ public class FileController {
     public ResponseEntity<?> renameFile(@RequestParam(name = "filename") String filename,
                                         @RequestBody @Valid RenameRequest newName) throws FileNotFoundException {
         String client = currentUserName();
-        log.info("Requested file renaming: '{}' into '{}' for {}", filename, newName.getName(), client);
-        return fileService.renameFile(client, filename, newName.getName());
+        log.info("Requested file renaming: '{}' into '{}' for {}", filename, newName.getFilename(), client);
+        return fileService.renameFile(client, filename, newName.getFilename());
     }
     /**
      * Shortcuts the username of the current thread.
@@ -81,5 +81,5 @@ public class FileController {
         return username;
     }
 
-
+    
 }

@@ -69,8 +69,6 @@ public class FileService {
 
     public ResponseEntity<?> storeFile(String username, String filename, MultipartFile file) throws IOException {
 
-//        log.debug("FileService received file {}", file.toString());
-
         UserEntity owner = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Пользователь %s не зарегистрирован."
@@ -94,9 +92,14 @@ public class FileService {
                 .body(file.getBody());
     }
 
-    public ResponseEntity<?> renameFile(@NotBlank String owner, @NotBlank String filename, @NotBlank String newName) throws FileNotFoundException {
-        fileRepository.findByOwnerAndFilename(owner, filename).orElseThrow(() -> new FileNotFoundException("Нельзя переименовать то, чего нет: " + filename));
-        fileRepository.renameFile(owner, filename, newName);    // unique name check should be watched by DB constraints
+    public ResponseEntity<?> renameFile(@NotBlank String owner,
+                                        @NotBlank String filename,
+                                        @NotBlank String newName) throws FileNotFoundException {
+        long fileId = getFileIdByOwnerAndFilename(owner, filename);     // exception of file's absence thrown here
+
+//        fileRepository.findByOwnerAndFilename(owner, filename).orElseThrow(() -> new FileNotFoundException("Нельзя переименовать то, чего нет: " + filename));
+//        fileRepository.renameFile(owner, filename, newName);    // unique name check should be watched by DB constraints
+        fileRepository.renameFile(fileId, newName);    // unique name check should be watched by DB constraints
         log.debug("FileService performed renaming '{}' into '{}' for {}", filename, newName, owner);
         return ResponseEntity.ok().build();
     }

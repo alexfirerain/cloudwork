@@ -59,13 +59,11 @@ public class UserService {
 
 
     public void terminateSession(String username) {
-
         userManager.setToken(username, null);
-
     }
 
     private String generateTokenFor(UserInfo authentication) {
-        String token = "%s@%s".formatted(authentication.getUsername(), new Date());
+        String token = "%s @ %s".formatted(authentication.getUsername(), new Date());
         log.trace("Token '{}' generated", token);
         return token;
     }

@@ -36,12 +36,12 @@ public class EntranceController {
     public ResponseEntity<?> logout() {
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Controller logging out for {}", username);
+//        log.info("Request to log out for {}", username);
+//
+//        userService.terminateSession(username);
+//        SecurityContextHolder.clearContext();
 
-        userService.terminateSession(username);
-        SecurityContextHolder.clearContext();
-
-        log.debug("Controller sends OK to log {} out", username);
+        log.debug("Controller sends OK to POST log {} out", username);
         return ResponseEntity.ok().build();
     }
 
@@ -52,8 +52,13 @@ public class EntranceController {
 
     @GetMapping("/login")
     public ResponseEntity<?> loginLogout() {
-        log.info("Logging out for {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-//        SecurityContextHolder.clearContext();
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Request to log out for {}", username);
+
+        userService.terminateSession(username);
+        SecurityContextHolder.clearContext();
+
+        log.debug("Controller sends OK to log {} out", username);
         return ResponseEntity.ok().build();
     }
 
