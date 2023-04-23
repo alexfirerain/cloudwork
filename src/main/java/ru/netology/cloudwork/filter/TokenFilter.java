@@ -33,7 +33,7 @@ public class TokenFilter extends OncePerRequestFilter {
     /**
      * Looks through incoming requests for tokens in their {@link #TOKEN_HEADER}.
      * When it finds no token, bypasses the request.
-     * When does, validates it and sets the linked user authenticated to this request.
+     * When does, validates it and sets the linked user authenticated to this request-thread.
      * @param request   a {@link HttpServletRequest} coming to the filter.
      * @param response  a {@link HttpServletResponse} coming from the filter.
      * @param filterChain a {@link FilterChain} filtering the incoming requests.
@@ -57,7 +57,7 @@ public class TokenFilter extends OncePerRequestFilter {
             log.trace("User by token found: {}", user.getUsername());
             LoggedIn auth = (LoggedIn) authChecker.authenticate(new LoggedIn(user));
             SecurityContextHolder.getContext().setAuthentication(auth);
-            log.debug("User {} set authenticated", auth.getPrincipal());
+            log.debug("User '{}' set authenticated", auth.getPrincipal());
         }
 
         filterChain.doFilter(request, response);
