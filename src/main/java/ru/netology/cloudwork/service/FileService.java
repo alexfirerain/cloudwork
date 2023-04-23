@@ -97,8 +97,6 @@ public class FileService {
                                         @NotBlank String newName) throws FileNotFoundException {
         long fileId = getFileIdByOwnerAndFilename(owner, filename);     // exception of file's absence thrown here
 
-//        fileRepository.findByOwnerAndFilename(owner, filename).orElseThrow(() -> new FileNotFoundException("Нельзя переименовать то, чего нет: " + filename));
-//        fileRepository.renameFile(owner, filename, newName);    // unique name check should be watched by DB constraints
         fileRepository.renameFile(fileId, newName);    // unique name check should be watched by DB constraints
         log.debug("FileService performed renaming '{}' into '{}' for {}", filename, newName, owner);
         return ResponseEntity.ok().build();
@@ -110,22 +108,6 @@ public class FileService {
         log.debug("FileService performed deletion '{}' for {}", filename, owner);
         return ResponseEntity.ok().build();
     }
-
-//    public ResponseEntity<FileDto> getFile(String username, String filename) throws FileNotFoundException {
-//
-//        UserEntity user = userRepository.findByUsername(username)
-//                .orElseThrow(() ->
-//                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
-//                                .formatted(username)));
-//
-//        FileEntity file = user.getFiles().stream()
-//                .filter(x -> x.getFileName().equals(filename))
-//                .findFirst()
-//                .orElseThrow(() -> new FileNotFoundException("Нет файла " + filename));
-//        log.debug("FileService served file {} from database", filename);
-//
-//        return ResponseEntity.ok(new FileDto(String.valueOf(file.getHash()), file.getBody()));
-//    }
 
     private long getFileIdByOwnerAndFilename(String owner, String filename) throws FileNotFoundException {
         UserEntity user = userRepository.findByUsername(owner)

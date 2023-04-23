@@ -25,6 +25,15 @@ public class ErrorDto implements Serializable {
      */
     private static final AtomicInteger idCount = new AtomicInteger();
 
+    /**
+     * Sets initial value for the all-through numeration.
+     * Intended to be used when continuing against a stored state of error logging.
+     * @param count error number to be assigned to the next ErrorDto.
+     */
+    public static void setCount(int count) {
+        idCount.set(count);
+    }
+
     public ErrorDto(String message) {
         this.message = message;
         id = idCount.getAndIncrement();
@@ -43,4 +52,6 @@ public class ErrorDto implements Serializable {
         return "Error#%d: %s"
                 .formatted(id, message);
     }
+
+
 }
