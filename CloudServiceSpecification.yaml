@@ -113,13 +113,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Error delet file
+          description: Error delete file
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
     get:
-      description: Dowload file from cloud
+      description: Download file from cloud
       parameters:
         - in: header
           name: auth-token
@@ -133,7 +133,7 @@ paths:
           description: File name to download
       responses:
         '200':
-          description: Success deleted
+          description: Success download file
           content:
             multipart/form-data:
               schema:
@@ -151,7 +151,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Error upload file
+          description: Error download file
           content:
             application/json:
               schema:
@@ -168,20 +168,20 @@ paths:
           in: query
           schema:
             type: string
-          description: File name to upload
+          description: File name to edit
       requestBody:
-        description: Login and password hash
+        description: New file name
         required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                name:
+                filename:
                   type: string
       responses:
         '200':
-          description: Success upload
+          description: Success update
         '400':
           description: Error input data
           content:
@@ -195,7 +195,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Error upload file
+          description: Error update file
           content:
             application/json:
               schema:

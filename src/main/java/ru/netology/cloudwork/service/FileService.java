@@ -66,7 +66,6 @@ public class FileService {
      * @return a ResponseEntity meaning OK.
      * @throws IOException if we received no file or were not able to store it right.
      */
-
     public ResponseEntity<?> storeFile(String username, String filename, MultipartFile file) throws IOException {
 
         UserEntity owner = userRepository.findByUsername(username)
@@ -82,6 +81,13 @@ public class FileService {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Provides for controller file from repository.
+     * @param owner username of the file's owner.
+     * @param filename to acquire.
+     * @return the requested file as a byte array, wrapped it a ResponseEntity.
+     * @throws FileNotFoundException if file pointed is not acquirable.
+     */
     public ResponseEntity<byte[]> serveFile(String owner, String filename) throws FileNotFoundException {
 
         FileEntity file = fileRepository.findByOwnerAndFilename(owner, filename)
@@ -92,6 +98,14 @@ public class FileService {
                 .body(file.getBody());
     }
 
+    /**
+     * Commands to rename a file in the DB.
+     * @param owner    name of the file's owner.
+     * @param filename name of the file to acquire.
+     * @param newName  new name to be applied to the file.
+     * @return an empty OK ResponseEntity.
+     * @throws FileNotFoundException if pointed file not found in the base.
+     */
     public ResponseEntity<?> renameFile(@NotBlank String owner,
                                         @NotBlank String filename,
                                         @NotBlank String newName) throws FileNotFoundException {

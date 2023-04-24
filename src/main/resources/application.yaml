@@ -14,9 +14,6 @@ spring:
       continue-on-error: true
       mode: always
 
-  liquibase:
-    enabled: false
-
   jpa:
     show-sql: false
     hibernate:
@@ -42,5 +39,4 @@ application:
     enabled: true
   front-url: >
     "http://localhost:8080",
-    "http://localhost:8081",
-    "http://localhost:9090"
+    "http://localhost:8081"

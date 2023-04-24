@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import ru.netology.cloudwork.filter.ExceptionHandlerFilter;
 import ru.netology.cloudwork.filter.TokenFilter;
 
@@ -15,7 +16,7 @@ import ru.netology.cloudwork.filter.TokenFilter;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    @Value("${application.front-url}")
+    @Value("${application.front-url}")  // don't work :(
     static String[] frontHosts;
 
     private final TokenFilter tokenFilter;
@@ -26,35 +27,22 @@ public class SecurityConfig {
         return http
                 .httpBasic().disable()
                 .cors(
-//                        httpSecurityCorsConfigurer -> {
-//                    CorsRegistry registry = new CorsRegistry();
-//
-//                    registry.addMapping("/**")
+//                    httpSecurityCorsConfigurer -> {                   // don't work :(
+//                        CorsRegistry registry = new CorsRegistry();
+//                        registry.addMapping("/**")
 //                            .allowCredentials(true)
-//                            .allowedOrigins(frontHosts)
+//                            .allowedOrigins("http://localhost:8080", "http://localhost:8081")
 //                            .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS");
-//                }
+//                    }
                 )
-                .and().csrf().disable()
+                .and()
+                .csrf().disable()
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, TokenFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/login").permitAll()
                 .anyRequest().authenticated()
                 .and().build();
-
     }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(UserManager userService,
-//                                                       PasswordEncoder passwordEncoder) {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(userService);
-//        authProvider.setPasswordEncoder(passwordEncoder);
-//        return new ProviderManager(authProvider);
-//    }
-
-
-
 
 }

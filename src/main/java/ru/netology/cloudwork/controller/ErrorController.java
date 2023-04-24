@@ -6,14 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.MissingRequestHeaderException;
-import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.netology.cloudwork.dto.ErrorDto;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This wise ErrorController is designed to help all CloudWork beans cope with troubles.
@@ -22,16 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ControllerAdvice
 @Slf4j
 public class ErrorController {
-    /**
-     * An all-through numerator of errors in da app.
-     * The generated sequence does not persist and starts over
-     * with every application run.
-     */
-    private static final AtomicInteger idCount = new AtomicInteger();
-
-    public static int nextErrorId() {
-        return idCount.getAndIncrement();
-    }
 
     /**
      * Handles situations when there's a bad request, username not found
