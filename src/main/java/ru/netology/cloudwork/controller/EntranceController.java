@@ -9,6 +9,8 @@ import ru.netology.cloudwork.dto.LoginResponse;
 import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.service.UserService;
 
+import java.security.Principal;
+
 /**
  * A controller for user login and logout.
  */
@@ -33,32 +35,14 @@ public class EntranceController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<?> logout(Principal principal) {
+        String userToExit = principal.getName();
+        log.debug("logout request for {}", userToExit);
 
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        log.info("Request to log out for {}", username);
-//
-//        userService.terminateSession(username);
-//        SecurityContextHolder.clearContext();
-
-        log.debug("Controller sends OK to POST log {} out", username);
-        return ResponseEntity.ok().build();
-    }
-
-//    @GetMapping("/logout")
-//    public ResponseEntity<?> logout() {
-//        return ResponseEntity.ok().build();
-//    }
-
-    @GetMapping("/login")
-    public ResponseEntity<?> loginLogout() {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("Request to log out for {}", username);
-
-        userService.terminateSession(username);
+        userService.terminateSession(userToExit);
         SecurityContextHolder.clearContext();
 
-        log.debug("Controller sends OK to log {} out", username);
+        log.debug("Controller sends OK to log {} out", userToExit);
         return ResponseEntity.ok().build();
     }
 

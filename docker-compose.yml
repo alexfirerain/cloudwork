@@ -1,0 +1,34 @@
+version: "3"
+services:
+  cloudwork:
+    container_name:
+      cloudwork
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./log:/log
+    depends_on:
+      - database
+
+  frontend:
+    container_name:
+      fro
+    ports:
+      - "8080:8080"
+
+  database:
+    container_name:
+      mysqld
+    ports:
+      - "3306:3306"
+    volumes:
+      - /mysql_data:/var/lib/mysql
+    command:
+      - "--max-allowed-packet=814743552"
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: fuck
+      MYSQL_ROOT_PASSWORD: fuck
+      MYSQL_DATABASE: storage
+    restart:
+      always

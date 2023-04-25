@@ -17,7 +17,7 @@ spring:
   jpa:
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
 
   servlet:
     multipart:
@@ -40,3 +40,5 @@ application:
   front-url: >
     "http://localhost:8080",
     "http://localhost:8081"
+  token-header: "auth-token"
+  token-prefix: "Bearer "

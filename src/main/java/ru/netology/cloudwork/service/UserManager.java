@@ -42,7 +42,7 @@ public class UserManager implements UserDetailsService {
             log.warn("Username {} not found", username);
             return new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
         });
-        log.debug("User {} found in the base", userInfo);
+        log.trace("User {} found in the base", userInfo);
 
         if (userInfo.getAuthorities().isEmpty()) {
             log.warn("User {} authorities not defined", username);

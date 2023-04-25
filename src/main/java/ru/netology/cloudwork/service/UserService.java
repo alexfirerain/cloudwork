@@ -52,6 +52,9 @@ public class UserService {
             token = generateTokenFor(user);
             log.debug("Token {} generated for {}", token, usernameRequested);
             userManager.setToken(usernameRequested, token);
+        } else {
+            // the bigger part of this string was formed and suggested by autocomplete, very nice )
+            log.debug("Token {} already exists for {}", token, usernameRequested);
         }
 
         return new LoginResponse(token);
@@ -59,7 +62,9 @@ public class UserService {
 
 
     public void terminateSession(String username) {
+        log.debug("Terminating {} session", username);
         userManager.setToken(username, null);
+
     }
 
     private String generateTokenFor(UserInfo authentication) {
