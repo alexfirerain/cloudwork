@@ -64,12 +64,6 @@ public class UserInfo implements UserDetails {
         this(username, password, Role.USER);
     }
 
-    public UserInfo(LoggedIn authentication) {
-        this.username = authentication.getUsername();
-        this.password = authentication.getPassword();
-
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

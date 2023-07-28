@@ -43,7 +43,7 @@ public class IntegrityContainerTest {
 
     @Test
     void loginAppTest() {
-        String getLoginURI = "http://%s:%d/login".formatted(cloudworkContainer.getHost(), PORT);
+        String getLoginURI = "https://%s:%d/login".formatted(cloudworkContainer.getHost(), PORT);
 
         String authToken = restTemplate.postForObject(getLoginURI, loginRequest, String.class);
 

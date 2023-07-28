@@ -40,6 +40,19 @@ public class FileController {
 
     }
 
+    /**
+     * This is a POST API endpoint for uploading a file.
+     * The endpoint takes in the name of the file to be uploaded
+     * and the actual file as a Multipart request body.
+     * The client's name is obtained from the Principal object.
+     * The method then calls the fileService to store the file
+     * and returns a ResponseEntity object with the appropriate response status and message.
+     * @param principal
+     * @param filename
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/file")
     public ResponseEntity<?> uploadFile(Principal principal,
                                         @RequestParam(name = "filename") String filename,

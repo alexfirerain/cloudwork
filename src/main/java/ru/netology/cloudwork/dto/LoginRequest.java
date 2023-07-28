@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 @Validated
 @AllArgsConstructor
+@NoArgsConstructor
 public class LoginRequest {
     @NotBlank(message = "Не указано имя.")
     private String login;

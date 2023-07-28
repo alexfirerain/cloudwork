@@ -60,7 +60,7 @@ public class ErrorController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleServerError(Exception exception) {
         String message = exception.getLocalizedMessage();
-        log.warn("A Serverside Error exception happened: {}", message);
+        log.warn("A Serverside Error '{}' happened: {}", exception.getClass().getSimpleName(), message);
         return new ResponseEntity<>(
                 new ErrorDto(message),
                 HttpStatus.INTERNAL_SERVER_ERROR);
