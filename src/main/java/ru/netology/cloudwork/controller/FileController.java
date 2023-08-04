@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.netology.cloudwork.dto.FileInfo;
@@ -31,11 +30,17 @@ public class FileController {
      */
     private final FileService fileService;
 
+    /**
+     * This is a GET API endpoint for listing files stored for given user.
+     * @param principal current thread-local user who makes the request.
+     * @param limit     a number of files to be listed.
+     * @return  a resoponse entity with a list provided by {@link FileService#listFiles(String, int) fileService}.
+     */
     @GetMapping("/list")
     public ResponseEntity<List<FileInfo>> listFiles(Principal principal,
                                                     @RequestParam(name = "limit", defaultValue = "5") int limit) {
         String client = principal.getName();    // there was still smarter way of doing this
-        log.info("Requested listing {} files for {}.", limit, client);
+        log.info("Requested listing {} files for {}.", limit, client);  // TODO: систематизировать уровни представления
         return fileService.listFiles(client, limit);
 
     }
@@ -47,11 +52,11 @@ public class FileController {
      * The client's name is obtained from the Principal object.
      * The method then calls the fileService to store the file
      * and returns a ResponseEntity object with the appropriate response status and message.
-     * @param principal
-     * @param filename
-     * @param file
-     * @return
-     * @throws IOException
+     * @param principal current thread-local user who makes the request.
+     * @param filename  a name of the file being downloaded.
+     * @param file  a body of the file being downloaded as a MultipartFile request body.
+     * @return  a response entity signaling OK, if OK, as returned by {@link #fileService}.
+     * @throws IOException  if any failure met during data transfer.
      */
     @PostMapping("/file")
     public ResponseEntity<?> uploadFile(Principal principal,

@@ -65,6 +65,7 @@ public class FileService {
      * @param file  the being saved file itself.
      * @return a ResponseEntity meaning OK.
      * @throws IOException if we received no file or were not able to store it right.
+     * @throws UsernameNotFoundException if unknown username gets passed.
      */
     public ResponseEntity<?> storeFile(String username, String filename, MultipartFile file) throws IOException {
 
@@ -82,7 +83,7 @@ public class FileService {
     }
 
     /**
-     * Provides for controller file from repository.
+     * Provides for the file controller a requested file from repository.
      * @param owner username of the file's owner.
      * @param filename to acquire.
      * @return the requested file as a byte array, wrapped it a ResponseEntity.
@@ -116,6 +117,13 @@ public class FileService {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Commands to remove the specified file of the pointed owner
+     * @param owner
+     * @param filename
+     * @return
+     * @throws FileNotFoundException
+     */
     public ResponseEntity<?> deleteFile(String owner, String filename) throws FileNotFoundException {
         long fileId = getFileIdByOwnerAndFilename(owner, filename);     // exception of file's absence thrown here
         fileRepository.deleteById(fileId);
