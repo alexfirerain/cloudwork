@@ -46,11 +46,11 @@ public class FileController {
     }
 
     /**
-     * This is a POST API endpoint for uploading a file.
-     * The endpoint takes in the name of the file to be uploaded
-     * and the actual file as a Multipart request body.
-     * The client's name is obtained from the Principal object.
-     * The method then calls the fileService to store the file
+     * An endpoint to handle a POST request for uploading a file.
+     * The method takes in the name of the file to be uploaded
+     * and the actual file as a Multipart request body, the client's name
+     * is obtained from the Principal object as well.
+     * Then method calls the {@link #fileService} to store the file
      * and returns a ResponseEntity object with the appropriate response status and message.
      * @param principal current thread-local user who makes the request.
      * @param filename  a name of the file being downloaded.
@@ -67,6 +67,16 @@ public class FileController {
         return fileService.storeFile(client, filename, file);
     }
 
+    /**
+     * An endpoint to handle a DELETE request to delete a file.
+     * The method takes in a name of file to delete, obtains a username from a security context
+     * and passes these parameters to {@link #fileService}'s corresponding method,
+     * then returning what it returns. Logs all along.
+     * @param principal current thread-local user who makes the request.
+     * @param filename  a name of current user's file to be deleted.
+     * @return  a response entity signalling OK, if OK, as returned by {@link #fileService}.
+     * @throws FileNotFoundException    if suddenly can't locate a pointed file.
+     */
     @DeleteMapping("/file")
     public ResponseEntity<?> deleteFile(Principal principal,
                                         @RequestParam(name = "filename") String filename) throws FileNotFoundException {
@@ -75,6 +85,17 @@ public class FileController {
         return fileService.deleteFile(client, filename);
     }
 
+    /**
+     * An endpoint to handle a GET request to acquire a file down.
+     * The method takes in a name of file to get, obtains a username from a security context
+     * and passes these parameters to a method of {@link #fileService},
+     * then returning what it returns.
+     * @param principal current threal-local user who asks to download.
+     * @param filename  a name of file the user is going to download.
+     * @return a byte array (which is a file in question) wrapped in a ResponseEntity
+     *      as returned by {@link #fileService}.
+     * @throws FileNotFoundException    if such a file not found for this user.
+     */
     @GetMapping("/file")
     public ResponseEntity<byte[]> downloadFile(Principal principal,
                             @RequestParam(name = "filename") String filename) throws FileNotFoundException {
