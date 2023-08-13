@@ -21,7 +21,8 @@ public class EntranceController {
     private final UserService userService;
 
     /**
-     * Creates a new {@link EntranceController} linked with an instance of
+     * Creates a new {@link EntranceController} linked with an instance of {@link UserService}
+     * to address
      * @param userService a {@link UserService}.
      */
     public EntranceController(UserService userService) {

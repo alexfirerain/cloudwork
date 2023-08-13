@@ -60,11 +60,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
      * @throws JsonProcessingException if there is an error in the conversion process.
      */
     private String convertObjectToJson(Object object) throws JsonProcessingException {
-        if (object == null) {
-            return null;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(object);
+         return object == null ?
+                 null :
+                 new ObjectMapper().writeValueAsString(object);
     }
 
 

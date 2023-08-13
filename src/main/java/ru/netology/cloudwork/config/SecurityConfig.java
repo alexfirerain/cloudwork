@@ -16,7 +16,7 @@ import ru.netology.cloudwork.filter.TokenFilter;
 import ru.netology.cloudwork.service.UserService;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 //    @Value("${application.front-url}")  // don't work :(

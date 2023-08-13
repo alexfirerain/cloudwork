@@ -34,7 +34,7 @@ public class FileController {
      * This is a GET API endpoint for listing files stored for given user.
      * @param principal current thread-local user who makes the request.
      * @param limit     a number of files to be listed.
-     * @return  a resoponse entity with a list provided by {@link FileService#listFiles(String, int) fileService}.
+     * @return  a response entity with a list provided by {@link FileService#listFiles(String, int) fileService}.
      */
     @GetMapping("/list")
     public ResponseEntity<List<FileInfo>> listFiles(Principal principal,
@@ -90,7 +90,7 @@ public class FileController {
      * The method takes in a name of file to get, obtains a username from a security context
      * and passes these parameters to a method of {@link #fileService},
      * then returning what it returns.
-     * @param principal current threal-local user who asks to download.
+     * @param principal current thread-local user who asks to download.
      * @param filename  a name of file the user is going to download.
      * @return a byte array (which is a file in question) wrapped in a ResponseEntity
      *      as returned by {@link #fileService}.
@@ -104,6 +104,18 @@ public class FileController {
         return fileService.serveFile(client, filename);
     }
 
+    /**
+     * An endpoint to handle a PUT request to change a name of the file.
+     * The method takes in an existing and an intended names of the file,
+     * also obtains a username from a security context,
+     * then passes all them to the {@link #fileService} and returns
+     * OK response as returned by it.
+     * @param principal current thread-local user who asks to rename his file.
+     * @param filename  an actual name of the file in question.
+     * @param newName   a {@link RenameRequest} DTO-object carrying a new name for that file.
+     * @return  an OK response entity, if OK, as returned be the service.
+     * @throws FileNotFoundException    if the file to be renamed was not found for some reason.
+     */
     @PutMapping("/file")
     public ResponseEntity<?> renameFile(Principal principal,
                                         @RequestParam(name = "filename") String filename,
