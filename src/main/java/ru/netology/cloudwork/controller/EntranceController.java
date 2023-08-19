@@ -22,7 +22,7 @@ public class EntranceController {
 
     /**
      * Creates a new {@link EntranceController} linked with an instance of {@link UserService}
-     * to address
+     * to address when defining user's rights to enter or not.
      * @param userService a {@link UserService}.
      */
     public EntranceController(UserService userService) {

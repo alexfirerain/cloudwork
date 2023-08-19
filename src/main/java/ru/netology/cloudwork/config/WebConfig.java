@@ -10,13 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 class WebConfig implements WebMvcConfigurer {
 
-//    @Value("${application.front-url}")    // don't work :(
-//    private String[] frontHosts;
+    @Value("${application.front-url}")    // don't work :(
+    private String[] frontHosts;
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
             .allowCredentials(true)
-            .allowedOrigins("http://localhost:8080", "http://localhost:8081")
+            .allowedOrigins(frontHosts)
             .allowedMethods("*");
     }
 

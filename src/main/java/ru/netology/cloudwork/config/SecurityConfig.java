@@ -19,8 +19,8 @@ import ru.netology.cloudwork.service.UserService;
 @EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-//    @Value("${application.front-url}")  // don't work :(
-//    private String[] frontHosts;
+    @Value("${application.front-url}")  // don't work :(
+    private String[] frontHosts;
 
     private final TokenFilter tokenFilter;
     private final ExceptionHandlerFilter exceptionHandlerFilter;

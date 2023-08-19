@@ -22,7 +22,7 @@ import java.io.IOException;
  * the {@link ru.netology.cloudwork.controller.ErrorController ErrorController} can reach.
  * If handling an incoming request somewhere afterward causes an exception,
  * catches it, forms an {@link ErrorDto} and writes it to the response,
- * setting status to 401 the exception being an instance of AuthenticationException
+ * setting status to 401, the exception being an instance of AuthenticationException,
  * and to 500 otherwise.
  */
 @Component
