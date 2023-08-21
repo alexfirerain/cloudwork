@@ -91,4 +91,18 @@ public class UserManager implements UserDetailsService {
         userRepository.setAccessToken(username, token);
         log.debug("Token {} mapped and stored for user {}", token, username);
     }
+
+    /**
+     * Sets token corresponding to the user to null.
+     * @param username the user whose session to be nullified.
+     * @return {@code false} if no user with the given name in DB,
+     * {@code true} if such a user exists and whose token is set to null now.
+     */
+    public boolean purgeSession(String username) {
+        if (isUserPresent(username)) {
+            setToken(username, null);
+            return true;
+        }
+        return false;
+    }
 }

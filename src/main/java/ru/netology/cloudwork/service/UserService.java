@@ -3,6 +3,7 @@ package ru.netology.cloudwork.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class UserService {
      * then generates a token for the newcomer and returns it,
      * or uses the existing token
      * if the user was already logged and did not exit.
+     * Current realization of user-preloading however purges tokens
+     * when the application starts.
      * @param loginRequest a DTO containing login information.
      * @return  a DTO with token for user to use.
      * @throws UsernameNotFoundException if login received not known.
@@ -60,14 +63,25 @@ public class UserService {
         return new LoginResponse(token);
     }
 
-
+    /**
+     * Cleans in the DB a token for user specified.
+     * @param username a user whose token to be nullified.
+     */
     public void terminateSession(String username) {
         log.debug("Terminating {} session", username);
-        userManager.setToken(username, null);
+        log.info(userManager.purgeSession(username) ?
+                "Token for {} nullified" :
+                "User {} to nullify not found", username);
 
     }
 
-    private String generateTokenFor(UserInfo authentication) {
+    /**
+     * Generates a simplified CloudWork-token for a user session.
+     * The resulting string consists of username and current date.
+     * @param authentication данные о пользователе.
+     * @return  the string of user's name and login moment.
+     */
+    private String generateTokenFor(UserDetails authentication) {
         String token = "%s @ %s".formatted(authentication.getUsername(), new Date());
         log.trace("Token '{}' generated", token);
         return token;

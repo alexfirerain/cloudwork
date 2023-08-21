@@ -20,7 +20,7 @@
     {
       "name": "application.token-header",
       "type": "java.lang.String",
-      "description": "The header name which carries authorization token from the front app."
+      "description": "The header name which carries an authorization token from the front app."
     },
     {
       "name": "application.token-prefix",

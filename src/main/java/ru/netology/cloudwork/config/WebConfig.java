@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 class WebConfig implements WebMvcConfigurer {
 
-    @Value("${application.front-url}")    // don't work :(
+    @Value("${application.front-url}")
     private String[] frontHosts;
     @Override
     public void addCorsMappings(CorsRegistry registry) {

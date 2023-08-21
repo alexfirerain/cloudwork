@@ -13,8 +13,10 @@ import java.util.List;
  * Just an addl utility to have some users preloaded
  * while testing and checking the CloudWork works.
  * It contains some predefined users; when da app starts and
- * preloading enabled, each got checked if such a username
+ * preloading enabled, each of them got checked if such a username
  * already in the DB and, if not, got saved into there.
+ * If a username already present, sets this user's token to null
+ * to have a clean new session.
  */
 @Component
 @RequiredArgsConstructor
@@ -30,9 +32,10 @@ public class UserPreloader implements CommandLineRunner {
     );
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
+        if (users == null) return;
         users.stream()
-                .filter(x -> !userManager.isUserPresent(x.getUsername()))
+                .filter(x -> !userManager.purgeSession(x.getUsername()))
                 .forEach(userManager::createUser);
 
     }

@@ -24,12 +24,22 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
-    static final String TOKEN_HEADER = "auth-token";    // these constants might be moved to global
-    static final String TOKEN_PREFIX = "Bearer ";
+    @Value("application.token-header")
+    static String TOKEN_HEADER;
 
+    @Value("application.token-prefix")
+    static String TOKEN_PREFIX;
+
+    /**
+     * A custom {@link org.springframework.security.authentication.AuthenticationManager
+     * AuthenticationManager} implementation in the CloudWork.
+     */
     private final AuthChecker authChecker;
+    /**
+     * A custom {@link org.springframework.security.core.userdetails.UserDetailsService
+     * UserDetailsService} implementation in the CloudWork.
+     */
     private final UserManager userManager;
-
 
 
     /**
