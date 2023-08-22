@@ -12,6 +12,7 @@ import ru.netology.cloudwork.service.FileService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.security.Principal;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class FileController {
     public ResponseEntity<List<FileInfo>> listFiles(Principal principal,
                                                     @RequestParam(name = "limit", defaultValue = "5") int limit) {
         String client = principal.getName();    // there was still smarter way of doing this
-        log.info("Requested listing {} files for {}.", limit, client);  // TODO: систематизировать уровни представления
+        log.debug("Requested listing {} files for {}.", limit, client);  // TODO: систематизировать уровни представления
         return fileService.listFiles(client, limit);
 
     }
@@ -63,7 +64,7 @@ public class FileController {
                                         @RequestParam(name = "filename") String filename,
                                         @RequestBody MultipartFile file) throws IOException {
         String client = principal.getName();
-        log.info("Requested file uploading: '{}' for {}", filename, client);
+        log.debug("Requested file uploading: '{}' for {}", filename, client);
         return fileService.storeFile(client, filename, file);
     }
 
@@ -81,7 +82,7 @@ public class FileController {
     public ResponseEntity<?> deleteFile(Principal principal,
                                         @RequestParam(name = "filename") String filename) throws FileNotFoundException {
         String client = principal.getName();
-        log.info("Requested file deletion: '{}' for {}", filename, client);
+        log.debug("Requested file deletion: '{}' for {}", filename, client);
         return fileService.deleteFile(client, filename);
     }
 
@@ -100,7 +101,7 @@ public class FileController {
     public ResponseEntity<byte[]> downloadFile(Principal principal,
                             @RequestParam(name = "filename") String filename) throws FileNotFoundException {
         String client = principal.getName();
-        log.info("Requested file downloading: '{}' for {}", filename, client);
+        log.debug("Requested file '{}' downloading for {}", filename, client);
         return fileService.serveFile(client, filename);
     }
 
@@ -119,9 +120,9 @@ public class FileController {
     @PutMapping("/file")
     public ResponseEntity<?> renameFile(Principal principal,
                                         @RequestParam(name = "filename") String filename,
-                                        @RequestBody @Valid RenameRequest newName) throws FileNotFoundException {
+                                        @RequestBody @Valid RenameRequest newName) throws FileNotFoundException, FileAlreadyExistsException {
         String client = principal.getName();
-        log.info("Requested file renaming: '{}' into '{}' for {}", filename, newName.getFilename(), client);
+        log.debug("Requested file renaming: '{}' into '{}' for {}", filename, newName.getFilename(), client);
         return fileService.renameFile(client, filename, newName.getFilename());
     }
 

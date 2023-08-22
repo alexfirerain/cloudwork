@@ -24,11 +24,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
-    @Value("application.token-header")
-    static String TOKEN_HEADER;
+    @Value("${application.token-header}")
+    private String TOKEN_HEADER;
 
-    @Value("application.token-prefix")
-    static String TOKEN_PREFIX;
+    @Value("${application.token-prefix}")
+    private String TOKEN_PREFIX;
 
     /**
      * A custom {@link org.springframework.security.authentication.AuthenticationManager

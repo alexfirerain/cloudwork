@@ -39,7 +39,7 @@ application:
   user-preloader:
     enabled: true
   front-url: >
-    "http://localhost:8080",
-    "http://localhost:8081"
+    http://localhost:8080,
+    http://localhost:8081
   token-header: "auth-token"
   token-prefix: "Bearer "

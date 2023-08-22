@@ -14,7 +14,7 @@
     },
     {
       "name": "application.front-url",
-      "type": "java.lang.String",
+      "type": "java.lang.String[]",
       "description": "The host where the front application operates from."
     },
     {
