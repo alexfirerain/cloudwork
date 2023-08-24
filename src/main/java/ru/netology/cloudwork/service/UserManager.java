@@ -81,12 +81,23 @@ public class UserManager implements UserDetailsService {
                 .orElse(null);
     }
 
+    /**
+     * Returns a token string which saved in DB for the user specified.
+     * @param username the user in question.
+     * @return  the string that is user's token, including {@code null} if it is null.
+     * @throws UsernameNotFoundException if an absent user is requested for.
+     */
     public String findTokenByUsername(String username) {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Юзернейм не найден: " + username));
         return user.getAccessToken();
     }
 
+    /**
+     * Sets a specified token string (or {@code null}) into relation with the certain user.
+     * @param username a user who is to be tokenized.
+     * @param token a token being assigned to the user's session.
+     */
     public void setToken(String username, String token) {
         userRepository.setAccessToken(username, token);
         log.debug("Token {} mapped and stored for user {}", token, username);

@@ -121,11 +121,13 @@ public class FileService {
 
         long fileId = getFileIdByOwnerAndFilename(owner, filename);
         if (fileId == -1L)
-            throw new FileNotFoundException("Не найдено файла '%s'.".formatted(filename));
+            throw new FileNotFoundException("Не найдено файла '%s'."
+                    .formatted(filename));
 
         long likelyConflictingId = getFileIdByOwnerAndFilename(owner, newName);
         if (likelyConflictingId != -1L)
-            throw new FileAlreadyExistsException("Невозможно переименовать файл в '%s': такой файл уже присутствует.".formatted(newName));
+            throw new FileAlreadyExistsException("Невозможно переименовать файл в '%s': такой файл уже присутствует."
+                    .formatted(newName));
 
         fileRepository.renameFile(fileId, newName);
         log.info("FileService performed renaming '{}' into '{}' for {}", filename, newName, owner);

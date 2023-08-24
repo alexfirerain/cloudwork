@@ -72,7 +72,6 @@ public class UserService {
         log.info(userManager.purgeSession(username) ?
                 "Token for {} nullified" :
                 "User {} to nullify not found", username);
-
     }
 
     /**
