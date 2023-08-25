@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.netology.cloudwork.filter.ExceptionHandlerFilter;
 import ru.netology.cloudwork.filter.TokenFilter;
 import ru.netology.cloudwork.service.UserService;
@@ -18,9 +20,15 @@ import ru.netology.cloudwork.service.UserService;
 @Configuration
 @EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
+//@EnableWebMvc
 public class SecurityConfig {
     @Value("${application.front-url}")
     private String[] frontHosts;
+
+    /**
+     * The methods that the application expects to receive from the front.
+     */
+    private final String[] methods = { "POST", "GET", "PUT", "DELETE", "OPTIONS" };
 
     private final TokenFilter tokenFilter;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
@@ -32,15 +40,15 @@ public class SecurityConfig {
         return http
                 .httpBasic().disable()
                 .cors(
-//                    httpSecurityCorsConfigurer -> {                   // don't work :(
-//                        CorsRegistry registry = new CorsRegistry();
-//                        registry.addMapping("/**")
-//                            .allowCredentials(true)
-//                            .allowedOrigins("http://localhost:8080", "http://localhost:8081")
-//                            .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS");
-//                    }
+                    httpSecurityCorsConfigurer -> {                   // don't work :(
+                        CorsRegistry registry = new CorsRegistry();
+                        registry.addMapping("/**")
+                            .allowCredentials(true)
+                            .allowedOrigins(frontHosts)
+                            .allowedMethods(methods);
+                    }
                 )
-                .and()
+//                .and()
                 .csrf().disable()
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, TokenFilter.class)

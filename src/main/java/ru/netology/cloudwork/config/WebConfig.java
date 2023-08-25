@@ -6,18 +6,18 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-@EnableWebMvc
-class WebConfig implements WebMvcConfigurer {
-
-    @Value("${application.front-url}")
-    private String[] frontHosts;
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-            .allowCredentials(true)
-            .allowedOrigins(frontHosts)
-            .allowedMethods("*");
-    }
-
-}
+//@Configuration
+//@EnableWebMvc
+//class WebConfig implements WebMvcConfigurer {
+//
+//    @Value("${application.front-url}")
+//    private String[] frontHosts;
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//            .allowCredentials(true)
+//            .allowedOrigins(frontHosts)
+//            .allowedMethods("*");
+//    }
+//
+//}
