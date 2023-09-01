@@ -34,7 +34,6 @@ public class SecurityConfig {
 
     private final TokenFilter tokenFilter;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
-//    private final UserService userService;
 //    private final LogoutSuccessHandler cloudworkLogoutHandler;
 
     @Bean
