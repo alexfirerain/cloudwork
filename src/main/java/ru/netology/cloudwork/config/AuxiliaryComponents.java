@@ -39,7 +39,7 @@ public class AuxiliaryComponents {
 
     /**
      * A bean for usage of header name at beans' initialization.
-     * @return
+     * @return  a string from properties file to be used as a token header in requests.
      */
     @Bean
     @Qualifier("header")
@@ -49,7 +49,7 @@ public class AuxiliaryComponents {
 
     /**
      * A bean for usage of header prefix at beans' initialization.
-     * @return
+     * @return  a string from properties used as a prefix in token header in requests.
      */
     @Bean
     @Qualifier("prefix")

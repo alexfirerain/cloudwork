@@ -81,7 +81,7 @@ public class TokenFilter extends OncePerRequestFilter {
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
         String token = extractToken(request);
         log.debug("Token in the request filtered: " + token);
-
+    
         if (token != null) {
             UserInfo user = userManager.findUserByToken(token);
 
