@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import ru.netology.cloudwork.filter.CloudworkLogoutHandler;
 import ru.netology.cloudwork.filter.ExceptionHandlerFilter;
 import ru.netology.cloudwork.filter.TokenFilter;
 
@@ -17,26 +19,29 @@ public class SecurityConfig {
 
     private final TokenFilter tokenFilter;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
-//    private final LogoutSuccessHandler cloudworkLogoutHandler;
+    private final CloudworkLogoutHandler cloudworkLogoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .httpBasic()
-                .disable()
+                    .disable()
                 .cors()
-                .and()
+                    .and()
                 .csrf()
-                .disable()
-                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                    .disable()
+                .addFilterBefore(tokenFilter, LogoutFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, TokenFilter.class)
                 .authorizeHttpRequests()
-                .requestMatchers("/login").permitAll()
-                .anyRequest().authenticated()
-                .and()
+                    .requestMatchers("/login").permitAll()
+                    .anyRequest().authenticated()
+                        .and()
                 .logout()
-                .disable()
-//                .clearAuthentication(false)
+//                .disable()
+//                .clearAuthentication(true)
+                    .addLogoutHandler(cloudworkLogoutHandler)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
 //                .logoutUrl("/logout")
 //                .permitAll()
 //                .logoutSuccessHandler(cloudworkLogoutHandler)
@@ -45,7 +50,7 @@ public class SecurityConfig {
 //                    SecurityContextHolder.clearContext();
 //                    httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 //                })
-//                .and()
+                .and()
                 .build();
     }
 

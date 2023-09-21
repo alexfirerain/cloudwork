@@ -25,15 +25,15 @@ public class UserPreloader implements CommandLineRunner {
 
     private final UserManager userManager;
 
-    List<UserEntity> users = List.of(
-        // add your users here
+    private final List<UserEntity> users = List.of(
+        // add users here
         new UserEntity("user", "0000"),
         new UserEntity("who_user", "1111")
     );
 
     @Override
     public void run(String... args) {
-        if (users == null) return;
+//        if (users == null) return;
         users.stream()
                 .filter(x -> !userManager.purgeSession(x.getUsername()))
                 .forEach(userManager::createUser);
