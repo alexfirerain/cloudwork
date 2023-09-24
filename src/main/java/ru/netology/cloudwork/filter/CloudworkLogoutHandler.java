@@ -1,6 +1,5 @@
 package ru.netology.cloudwork.filter;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 import ru.netology.cloudwork.service.UserService;
-
-import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +23,7 @@ public class CloudworkLogoutHandler implements LogoutHandler {
         log.debug("Logging out '{}' in proper handler.", user);
 
         userService.terminateSession(user);
-        SecurityContextHolder.clearContext();
+//        SecurityContextHolder.clearContext();
 
         response.setStatus(HttpServletResponse.SC_OK);
         log.info("User '{}' logged out.", user);
