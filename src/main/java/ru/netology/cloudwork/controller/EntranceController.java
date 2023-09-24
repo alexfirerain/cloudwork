@@ -49,21 +49,15 @@ public class EntranceController {
         return ResponseEntity.ok(tokenOffer);
     }
 
+    /**
+     * A handler to handle a redirect request on logout,
+     * "/logout" endpoint having been treated by a Spring Boot logout handler.
+     * @return  OK response entity.
+     */
     @GetMapping("/login")
     public ResponseEntity<?> login() {
         log.info("GET request to login endpoint");
         return ResponseEntity.ok().build();
     }
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(Principal principal) {
-//        String userToExit = principal.getName();
-//        log.debug("logout request for {}", userToExit);
-//
-//        userService.terminateSession(userToExit);
-//        SecurityContextHolder.clearContext();
-//
-//        log.debug("Controller sends OK to log {} out", userToExit);
-//        return ResponseEntity.ok().build();
-//    }
 
 }
