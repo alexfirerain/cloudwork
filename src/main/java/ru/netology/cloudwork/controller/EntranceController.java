@@ -18,6 +18,9 @@ import java.security.Principal;
 @Slf4j
 public class EntranceController {
 
+    /**
+     * A service for managing users and sessions, this controller directly works with.
+     */
     private final UserService userService;
 
     /**
