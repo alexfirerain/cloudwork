@@ -79,13 +79,12 @@ public class TokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
-        String token = extractToken(request);
-        log.debug("Token in the request filtered: " + token);
+        boolean toBeAuthenticated = !"/login".equals(request.getServletPath());
 
-        boolean toBeAuthenticated = !"/login".equals(request.getRequestURI());
+        if (toBeAuthenticated) {
+            String token = extractToken(request);
+            log.debug("Token in the request filtered: " + token);
 
-
-        if (toBeAuthenticated && token != null) {
             UserInfo user = userManager.findUserByToken(token);
 
             if (user == null) {
