@@ -28,7 +28,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      * @param newName   a name the file will bear from now on.
      */
     @Modifying
-    @Query("update FileEntity f set f.fileName = :newName WHERE f.owner.username = :owner AND f.fileName = :oldName")
+    @Query("UPDATE FileEntity f SET f.fileName = :newName WHERE f.owner.username = :owner AND f.fileName = :oldName")
     void renameFile(@NotNull @Param("owner") String owner,      // why does this query not work?!
                     @NotNull @Param("oldName") String oldName,
                     @NotNull @Param("newName") String newName);
@@ -40,8 +40,8 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      * @param newName   a name the file will bear from now on.
      */
     @Modifying
-    @Query("update FileEntity f set f.fileName = :newName WHERE f.fileId = :id")
-    void renameFile(@NotNull @Param("id") long id,
+    @Query("UPDATE FileEntity f SET f.fileName = :newName WHERE f.fileId = :id")
+    void renameFile(@Param("id") long id,
                     @NotNull @Param("newName") String newName);
 
 
@@ -51,7 +51,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      * @param fileName  a name of file.
      * @return  an optional presentation of the found {@link FileEntity}.
      */
-    @Query("select f from FileEntity f WHERE f.owner.username = :owner AND f.fileName = :fileName")
+    @Query("SELECT f FROM FileEntity f WHERE f.owner.username = :owner AND f.fileName = :fileName")
     Optional<FileEntity> findByOwnerAndFilename(@NotNull @Param("owner") String owner,
                                                 @NotNull @Param("fileName") String fileName);
 

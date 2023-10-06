@@ -44,8 +44,7 @@ public class FileService {
      */
     public ResponseEntity<List<FileInfo>> listFiles(String username, int limit) {
         Optional<UserEntity> user = userRepository.findByUsername(username);
-        user.orElseThrow(() ->
-                new UsernameNotFoundException("Пользователь %s не зарегистрирован."
+        user.orElseThrow(() -> new UsernameNotFoundException("Пользователь %s не зарегистрирован."
                         .formatted(username)));
 
         List<FileInfo> files = user.get()   
@@ -72,11 +71,10 @@ public class FileService {
     public ResponseEntity<?> storeFile(String username, String filename, MultipartFile file) throws IOException {
 
         UserEntity owner = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь %s не зарегистрирован."
                                 .formatted(username)));
-        long likelyConflictingId = getFileIdByOwnerAndFilename(username, filename);
-        if (likelyConflictingId != -1L)
+
+        if (getFileIdByOwnerAndFilename(username, filename).isPresent())
             throw new FileAlreadyExistsException("Загрузка невозможна: файл с именем '%s' уже присутствует."
                     .formatted(filename));
 
@@ -119,13 +117,11 @@ public class FileService {
                                         @NotBlank String filename,
                                         @NotBlank String newName) throws FileNotFoundException, FileAlreadyExistsException, UsernameNotFoundException {
 
-        long fileId = getFileIdByOwnerAndFilename(owner, filename);
-        if (fileId == -1L)
-            throw new FileNotFoundException("Не найдено файла '%s'."
-                    .formatted(filename));
+        long fileId = getFileIdByOwnerAndFilename(owner, filename)
+                .orElseThrow(() -> new FileNotFoundException("Не найдено файла '%s'."
+                        .formatted(filename)));
 
-        long likelyConflictingId = getFileIdByOwnerAndFilename(owner, newName);
-        if (likelyConflictingId != -1L)
+        if (getFileIdByOwnerAndFilename(owner, newName).isPresent())
             throw new FileAlreadyExistsException("Невозможно переименовать файл в '%s': такой файл уже присутствует."
                     .formatted(newName));
 
@@ -143,24 +139,25 @@ public class FileService {
      * @throws UsernameNotFoundException if no such user there.
      */
     public ResponseEntity<?> deleteFile(String owner, String filename) throws FileNotFoundException {
-        long fileId = getFileIdByOwnerAndFilename(owner, filename);
-        if (fileId == -1L)
-            throw new FileNotFoundException("Файл %s не найден.".formatted(filename));
+        long fileId = getFileIdByOwnerAndFilename(owner, filename)
+                .orElseThrow(() ->
+                        new FileNotFoundException("Файл %s не найден.".formatted(filename)));
+
         fileRepository.deleteById(fileId);
         log.info("FileService performed deletion '{}' for {}", filename, owner);
         return ResponseEntity.ok().build();
     }
 
     /**
-     * Reports ID of the file defined by owner and filename.
+     * Supplies an optional containing ID of the file defined by owner and filename.
      * If absent user is specified, throws corresponding exception.
-     * If no such file is found at user's disposal, returns -1L.
+     * If no such file is found at user's disposal, returns an empty optional.
      * @param owner username of file's owner.
      * @param filename filename of the matter.
-     * @return  the file's ID in the DB, -1L if not found.
+     * @return  an optional with the file's ID in the DB, an empty one if not found.
      * @throws UsernameNotFoundException    if no such user present.
      */
-    private long getFileIdByOwnerAndFilename(String owner, String filename) throws UsernameNotFoundException {
+    private Optional<Long> getFileIdByOwnerAndFilename(String owner, String filename) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByUsername(owner)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Пользователь %s не зарегистрирован."
@@ -168,7 +165,6 @@ public class FileService {
         return user.getFiles().stream()
                 .filter(x -> x.getFileName().equals(filename))
                 .findFirst()
-                .map(FileEntity::getFileId)
-                .orElse(-1L);
+                .map(FileEntity::getFileId);
     }
 }

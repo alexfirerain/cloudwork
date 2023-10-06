@@ -7,8 +7,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.netology.cloudwork.entity.FileEntity;
 import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.model.UserInfo;
+import ru.netology.cloudwork.repository.FileRepository;
 import ru.netology.cloudwork.repository.UserRepository;
 
 import java.util.Optional;
@@ -23,6 +25,7 @@ public class UserManager implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
+    private FileRepository fileRepository;
 
     /**
      * Locates the user based on the username against DB. The <code>UserDetails</code>
@@ -116,4 +119,25 @@ public class UserManager implements UserDetailsService {
         }
         return false;
     }
+
+    /**
+     * Deletes from DB a user with name specified, also all his/her files.
+     * If such a user is not there, throws a corresponding exception.
+     * @param name the username of a user to be deleted.
+     * @throws UsernameNotFoundException if no user with such a name found.
+     */
+    public void deleteUser(String name) {
+        UserEntity userToDelete = userRepository.findByUsername(name).orElseThrow(() -> {
+            log.warn("Username '{}' not found", name);
+            return new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
+        });
+
+        fileRepository.deleteAllById(
+                userToDelete.getFiles().stream()
+                        .map(FileEntity::getFileId).toList()
+        );
+
+        userRepository.deleteById(userToDelete.getUserId());
+    }
+
 }

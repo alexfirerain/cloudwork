@@ -38,9 +38,9 @@ public class EntranceController {
      * and calls the "{@link UserService#initializeSession(LoginRequest) initializeSession()}" method
      * of the {@link #userService} to generate a LoginResponse object
      * containing a token offer.
-     * @param loginRequest a JSON-formed request to the application containing
+     * @param loginRequest a {@link LoginRequest JSON-formed request} to the application containing
      *                     login and password pair.
-     * @return a ResponseEntity object with the LoginResponse object as the response body.
+     * @return a ResponseEntity object with the {@link LoginResponse} object as the response body.
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
@@ -54,7 +54,7 @@ public class EntranceController {
 
     /**
      * A handler to handle a redirect request on logout,
-     * "/logout" endpoint having been treated by a Spring Boot logout handler.
+     * "/logout" endpoint having been treated by a {@link ru.netology.cloudwork.filter.CloudworkLogoutHandler Spring Boot logout handler}.
      * @return  OK response entity.
      */
     @GetMapping("/login")

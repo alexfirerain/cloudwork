@@ -29,7 +29,7 @@ public class UserService {
      * Tries to open user session by verifying the username and password,
      * then generates a token for the newcomer and returns it,
      * or uses the existing token
-     * if the user was already logged and did not exit.
+     * if the user has already been logged and did not exit.
      * Current realization of user-preloading however purges tokens
      * when the application starts.
      * @param loginRequest a DTO containing login information.

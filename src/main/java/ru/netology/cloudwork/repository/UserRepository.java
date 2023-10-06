@@ -18,8 +18,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByAccessToken(String accessToken);
 
     @Modifying
-    @Query("update UserEntity u set u.accessToken = :token WHERE u.username = :username")
+    @Query("UPDATE UserEntity u SET u.accessToken = :token WHERE u.username = :username")
     void setAccessToken(@Param("username") String username, @Param("token") String token);
 
-
+    @Modifying
+    @Query("DELETE  UserEntity u WHERE u.username = :name")
+    void deleteByUsername(String name);
 }
