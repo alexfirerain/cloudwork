@@ -9,9 +9,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.dto.LoginResponse;
+import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.model.UserInfo;
+import ru.netology.cloudwork.repository.UserRepository;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * A manager for user tokens and sessions.
@@ -23,6 +26,7 @@ public class UserService {
 
     private final PasswordEncoder encoder;
     private final UserManager userManager;
+    private final UserRepository userRepository;
 
 
     /**
@@ -86,4 +90,11 @@ public class UserService {
         return token;
     }
 
+    public UserEntity getUserByUsername(String username) {
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+        return user
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
+                                .formatted(username)));
+    }
 }

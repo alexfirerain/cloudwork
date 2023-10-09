@@ -46,7 +46,7 @@ public class FileEntity {
     @Column(columnDefinition = "LONGBLOB NOT NULL")
     private byte[] body;
 
-    public FileEntity(UserEntity owner, String fileName, MultipartFile file) throws IOException {
+    public FileEntity(@NotNull UserEntity owner, String fileName, MultipartFile file) throws IOException {
         this.fileName = fileName;
         this.size = file.getSize();
         this.fileType = file.getContentType();
@@ -54,3 +54,4 @@ public class FileEntity {
         this.body = file.getBytes();
     }
 }
+

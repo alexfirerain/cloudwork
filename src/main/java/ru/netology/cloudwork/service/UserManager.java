@@ -38,17 +38,17 @@ public class UserManager implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.trace("UserService is asked for {}", username);
+        log.trace("UserService is asked for '{}'", username);
         Optional<UserEntity> entity = userRepository.findByUsername(username);
 
         UserInfo userInfo = entity.map(UserInfo::new).orElseThrow(() -> {
-            log.warn("Username {} not found", username);
+            log.warn("Username '{}' not found", username);
             return new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
         });
         log.trace("User {} found in the base", userInfo);
 
         if (userInfo.getAuthorities().isEmpty()) {
-            log.warn("User {} authorities not defined", username);
+            log.warn("User '{}'s authorities not defined", username);
             throw new UsernameNotFoundException("Полномочия пользователя не определены.");
         }
         return userInfo;
