@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.entity.FileEntity;
-import ru.netology.cloudwork.entity.UserEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -70,15 +69,13 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
     Optional<Long> findFileIdByOwnerAndFilename(@NotNull @Param("owner") String owner,
                                             @NotNull @Param("fileName") String fileName);
 
-    @Query(value = "SELECT * FROM files WHERE owner_user_id = :user LIMIT :limit", nativeQuery = true)
-    List<FileEntity> listFiles(@NotNull @Param("user") UserEntity username, @Param("limit") int limit);
+    /**
+     * Serves a limited list of files owned by a pointed user.
+     * @param username a name of owning user.
+     * @param limit    a number of files to be listed.
+     * @return  a list of {@link FileEntity} objects, restricted with a limit and ordered by ID.
+     */
+    @Query(value = "SELECT * FROM files WHERE owner_user_id = (SELECT user_id FROM users WHERE username =:username) LIMIT :limit", nativeQuery = true)
+    List<FileEntity> listFiles(@Param("username") String username, @Param("limit") int limit);
 
-    default List<FileInfo> listFileInfos(UserEntity owner, int limit) {
-        List<FileEntity> fileEntities = listFiles(owner, limit);
-        System.out.println("list of entities: " + fileEntities.size());
-        List<FileInfo> list = fileEntities.stream()
-                .map(FileInfo::new).collect(Collectors.toList());
-        System.out.println("list of infos: " + list.size());
-        return list;
-    }
 }

@@ -30,7 +30,6 @@ import java.util.List;
 @Transactional
 public class FileService {
 
-    private final UserRepository userRepository;
     private final UserService userService;
     private final FileRepository fileRepository;
 
@@ -43,14 +42,8 @@ public class FileService {
      */
     public ResponseEntity<List<FileInfo>> listFiles(String username, int limit) {
 
-        UserEntity user = userService.getUserByUsername(username);
-
-        List<FileInfo> files = fileRepository.listFileInfos(user, limit);
-//                user
-//                .getFiles().stream()
-//                .limit(limit)
-//                .map(FileInfo::new)
-//                .collect(Collectors.toList());
+        List<FileInfo> files = fileRepository.listFiles(username, limit)
+                .stream().map(FileInfo::new).toList();
         log.info("List of {} files for '{}' served", files.size(), username);
 
         return ResponseEntity.ok(files);
@@ -78,7 +71,7 @@ public class FileService {
         FileEntity uploadingFile = new FileEntity(owner, filename, file);
 
         fileRepository.save(uploadingFile);
-        log.info("FileService stored file '{}' to database", filename);
+        log.info("File '{}' stored to database by '{}'", filename, username);
 
         return ResponseEntity.ok().build();
     }

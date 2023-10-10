@@ -1,5 +1,6 @@
 package ru.netology.cloudwork.repository;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,10 +20,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Modifying
     @Query("UPDATE UserEntity u SET u.accessToken = :token WHERE u.username = :username")
-    void setAccessToken(@Param("username") String username, @Param("token") String token);
+    void setAccessToken(@NotNull @Param("username") String username, @Param("token") String token);
 
     @Modifying
-    @Query("DELETE  UserEntity u WHERE u.username = :name")
-    void deleteByUsername(String name);
+    @Query("DELETE UserEntity u WHERE u.username = :name")
+    void deleteByUsername(@NotNull @Param("name") String name);
 
 }
