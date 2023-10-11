@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -45,6 +46,8 @@ public class FileEntity {
     @Basic(fetch = LAZY)
     @Column(columnDefinition = "LONGBLOB NOT NULL")
     private byte[] body;
+
+    private Date date;
 
     public FileEntity(@NotNull UserEntity owner, String fileName, MultipartFile file) throws IOException {
         this.fileName = fileName;

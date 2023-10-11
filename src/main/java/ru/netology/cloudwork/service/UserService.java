@@ -90,6 +90,12 @@ public class UserService {
         return token;
     }
 
+    /**
+     * Delivers the {@link UserEntity} corresponding to a username given.
+     * @param username a user's name given.
+     * @return  a UserEntity from DB, having the specified username.
+     * @throws UsernameNotFoundException if no entity with the given login found.
+     */
     public UserEntity getUserByUsername(String username) {
         Optional<UserEntity> user = userRepository.findByUsername(username);
         return user

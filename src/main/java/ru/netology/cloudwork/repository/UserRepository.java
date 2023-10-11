@@ -14,8 +14,18 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    /**
+     * Provides the {@link UserEntity} defined by unique username.
+     * @param username a name to identify user.
+     * @return an optional with the UserEntity found, empty one if not.
+     */
     Optional<UserEntity> findByUsername(String username);
 
+    /**
+     * Finds and returns the {@link UserEntity} by its current session token.
+     * @param accessToken a string 
+     * @return
+     */
     Optional<UserEntity> findByAccessToken(String accessToken);
 
     @Modifying
