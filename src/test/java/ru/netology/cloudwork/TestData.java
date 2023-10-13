@@ -4,6 +4,10 @@ import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.entity.FileEntity;
 import ru.netology.cloudwork.entity.UserEntity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class TestData {
 
     public static final String USERNAME = "user";
@@ -16,10 +20,22 @@ public class TestData {
 
 
     public static UserEntity TEST_USER = new UserEntity(USERNAME, PASSWORD);
-    public static FileEntity TEST_FILE = new FileEntity(1L,
-            "test.txt",
-            26L,
-            null,
-            TEST_USER,
-            "тестовый файл".getBytes());
+
+    private static final SimpleDateFormat dater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static FileEntity TEST_FILE;
+
+    static {
+        try {
+            TEST_FILE = new FileEntity(
+                    1L,
+                    "test.txt",
+                    26L,
+                    null,
+                    TEST_USER,
+                    "тестовый файл".getBytes(),
+                    dater.parse("2023-05-20 18:15:40"));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -47,7 +47,8 @@ public class FileEntity {
     @Column(columnDefinition = "LONGBLOB NOT NULL")
     private byte[] body;
 
-    private Date date;
+    @Column(name = "upload_date", nullable = false)
+    private Date uploadDate;
 
     public FileEntity(@NotNull UserEntity owner, String fileName, MultipartFile file) throws IOException {
         this.fileName = fileName;
@@ -55,6 +56,12 @@ public class FileEntity {
         this.fileType = file.getContentType();
         this.owner = owner;
         this.body = file.getBytes();
+        this.uploadDate = new Date();
     }
+
+    public static FileEntity getEntity(@NotNull UserEntity owner, String fileName, byte[] body, String date) {
+        return null;
+    }
+
 }
 

@@ -13,7 +13,6 @@ import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.entity.FileEntity;
 import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.repository.FileRepository;
-import ru.netology.cloudwork.repository.UserRepository;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,11 +40,9 @@ public class FileService {
      * @return  a ResponseEntity with the list of {@link FileInfo} items about user's files, of length specified.
      */
     public ResponseEntity<List<FileInfo>> listFiles(String username, int limit) {
-
         List<FileInfo> files = fileRepository.listFiles(username, limit)
                 .stream().map(FileInfo::new).toList();
         log.info("List of {} files for '{}' served", files.size(), username);
-
         return ResponseEntity.ok(files);
     }
 
@@ -61,18 +58,13 @@ public class FileService {
      * @throws IOException if we received no file or were not able to store it right.
      */
     public ResponseEntity<?> storeFile(String username, String filename, MultipartFile file) throws IOException {
-
         if (fileRepository.findFileIdByOwnerAndFilename(username, filename).isPresent())
             throw new FileAlreadyExistsException("Загрузка невозможна: файл с именем '%s' уже присутствует."
                     .formatted(filename));
-
         UserEntity owner = userService.getUserByUsername(username);
-
         FileEntity uploadingFile = new FileEntity(owner, filename, file);
-
         fileRepository.save(uploadingFile);
         log.info("File '{}' stored to database by '{}'", filename, username);
-
         return ResponseEntity.ok().build();
     }
 
@@ -84,7 +76,6 @@ public class FileService {
      * @throws FileNotFoundException if file pointed is not acquirable.
      */
     public ResponseEntity<byte[]> serveFile(String owner, String filename) throws FileNotFoundException {
-
         FileEntity file = fileRepository.findByOwnerAndFilename(owner, filename)
                 .orElseThrow(() -> new FileNotFoundException("На сервере нет файла '%s'".formatted(filename)));
         log.info("FileService is serving file '{}' for '{}'", filename, owner);
@@ -106,15 +97,12 @@ public class FileService {
     public ResponseEntity<?> renameFile(@NotBlank String owner,
                                         @NotBlank String filename,
                                         @NotBlank String newName) throws FileNotFoundException, FileAlreadyExistsException, UsernameNotFoundException {
-
         long fileId = fileRepository.findFileIdByOwnerAndFilename(owner, filename)
                 .orElseThrow(() -> new FileNotFoundException("Не найдено файла '%s'."
                         .formatted(filename)));
-
         if (fileRepository.findFileIdByOwnerAndFilename(owner, newName).isPresent())
             throw new FileAlreadyExistsException("Невозможно переименовать файл в '%s': такой файл уже присутствует."
                     .formatted(newName));
-
         fileRepository.renameFile(fileId, newName);
         log.info("FileService performed renaming '{}' into '{}' for '{}'", filename, newName, owner);
         return ResponseEntity.ok().build();
@@ -131,7 +119,6 @@ public class FileService {
     public ResponseEntity<?> deleteFile(String owner, String filename) throws FileNotFoundException {
         long fileId = fileRepository.findFileIdByOwnerAndFilename(owner, filename)
                 .orElseThrow(() -> new FileNotFoundException("Файл %s не найден.".formatted(filename)));
-
         fileRepository.deleteById(fileId);
         log.info("FileService performed deletion '{}' for {}", filename, owner);
         return ResponseEntity.ok().build();
