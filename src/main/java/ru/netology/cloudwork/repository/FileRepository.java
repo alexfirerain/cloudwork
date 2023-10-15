@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.entity.FileEntity;
 
 import java.util.List;
@@ -67,13 +68,15 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
     Optional<Long> findFileIdByOwnerAndFilename(@NotNull @Param("owner") String owner,
                                             @NotNull @Param("fileName") String fileName);
 
-    /**
+     /**
      * Serves a limited list of files owned by a pointed user.
      * @param username a name of owning user.
      * @param limit    a number of files to be listed.
      * @return  a list of {@link FileEntity} objects, restricted with a limit and ordered by ID.
      */
-    @Query(value = "SELECT * FROM files WHERE owner_user_id = (SELECT user_id FROM users WHERE username =:username) LIMIT :limit", nativeQuery = true)
-    List<FileEntity> listFiles(@Param("username") String username, @Param("limit") int limit);
+    @Query(value = "SELECT file_name, size FROM files " +
+            "WHERE owner_user_id = (SELECT user_id FROM users WHERE username =:username) " +
+            "ORDER BY upload_date LIMIT :limit", nativeQuery = true)
+    List<FileInfo> listFiles(@Param("username") String username, @Param("limit") int limit);
 
 }

@@ -3,9 +3,11 @@ package ru.netology.cloudwork.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.model.Role;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,28 +19,6 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 @NoArgsConstructor
 public class UserEntity {
-
-    /**
-     * A practical constructor for convenient user creation.
-     * @param username  a username.
-     * @param password  a password.
-     * @param authorities   a set of roles.
-     */
-    public UserEntity(String username, String password, Role... authorities) {
-        this.username = username;
-        this.password = password;
-        this.authorities = Arrays.stream(authorities).map(Role::getAuthority).collect(Collectors.joining(","));
-    }
-
-    /**
-     * A practical constructor for convenient user creation
-     * defaulting a role to just being a USER.
-     * @param username  a username.
-     * @param password  a password.
-     */
-    public UserEntity(String username, String password) {
-        this(username, password, Role.USER);
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,4 +49,34 @@ public class UserEntity {
 
     private String accessToken = null;
 
+    /**
+     * A practical constructor for convenient user creation.
+     * @param username  a username.
+     * @param password  a password.
+     * @param authorities   roles of the user.
+     */
+    public UserEntity(String username, String password, Role... authorities) {
+        this.username = username;
+        this.password = password;
+        this.authorities = Arrays.stream(authorities)
+                .map(Role::getAuthority).collect(Collectors.joining(","));
+    }
+
+    /**
+     * A practical constructor for convenient user creation
+     * defaulting a role to just being a USER.
+     * @param username  a username.
+     * @param password  a password.
+     */
+    public UserEntity(String username, String password) {
+        this(username, password, Role.USER);
+    }
+
+    public List<FileInfo> getFileList(int limit) {
+        return files.stream()
+                .sorted(Comparator.comparing(FileEntity::getUploadDate).reversed())
+                .map(FileInfo::new)
+                .limit(limit)
+                .toList();
+    }
 }
