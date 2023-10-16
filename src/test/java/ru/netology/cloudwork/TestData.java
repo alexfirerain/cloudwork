@@ -21,21 +21,11 @@ public class TestData {
 
     public static UserEntity TEST_USER = new UserEntity(USERNAME, PASSWORD);
 
-    private static final SimpleDateFormat dater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static FileEntity TEST_FILE;
-
-    static {
-        try {
-            TEST_FILE = new FileEntity(
-                    1L,
-                    "test.txt",
-                    26L,
-                    null,
-                    TEST_USER,
-                    "тестовый файл".getBytes(),
-                    dater.parse("2023-05-20 18:15:40"));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static FileEntity TEST_FILE = FileEntity.getEntity(
+                1L,
+                TEST_USER,
+                "test.txt",
+                "текстовый файл".getBytes(),
+                "2023-05-20 18:15:40"
+        );
 }

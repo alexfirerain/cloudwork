@@ -40,7 +40,10 @@ public class FileService {
      * @return  a ResponseEntity with the list of {@link FileInfo} items about user's files, of length specified.
      */
     public ResponseEntity<List<FileInfo>> listFiles(String username, int limit) {
-        List<FileInfo> files = userService.getUserByUsername(username).getFileList(limit);
+        List<FileInfo> files = fileRepository.listFiles(username, limit)
+                .stream()
+                .map(response -> new FileInfo((String) response[0], (Long) response[1]))
+                .toList();
         log.info("List of {} files for '{}' served", files.size(), username);
         return ResponseEntity.ok(files);
     }

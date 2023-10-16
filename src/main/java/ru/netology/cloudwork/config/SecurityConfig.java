@@ -42,7 +42,7 @@ public class SecurityConfig {
                     .addLogoutHandler(cloudworkLogoutHandler)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
-//                .logoutUrl("/logout")
+                .logoutUrl("/logout")
 //                .permitAll()
 //                .logoutSuccessHandler(cloudworkLogoutHandler)
 //                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {

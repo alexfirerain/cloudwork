@@ -75,7 +75,7 @@ public class UserEntity {
     public List<FileInfo> getFileList(int limit) {
         return files.stream()
                 .sorted(Comparator.comparing(FileEntity::getUploadDate).reversed())
-                .map(FileInfo::new)
+                .map(FileEntity::toFileInfo)
                 .limit(limit)
                 .toList();
     }

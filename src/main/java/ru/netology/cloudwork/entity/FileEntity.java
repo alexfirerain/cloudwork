@@ -8,8 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+import ru.netology.cloudwork.dto.FileInfo;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -59,8 +62,38 @@ public class FileEntity {
         this.uploadDate = new Date();
     }
 
-    public static FileEntity getEntity(@NotNull UserEntity owner, String fileName, byte[] body, String date) {
-        return null;
+    /**
+     * A utility rendering a {@link FileInfo} DTO corresponding to the entity.
+     * @return  a new FileInfo object with name and size of the FileEntity.
+     */
+    public FileInfo toFileInfo() {
+        return new FileInfo(fileName, size);
+    }
+
+    /**
+     * An auxiliary generator of FileEntities explicitly setting ID, ignoring file type,
+     * and setting a date as is defined by a string looking like "yyyy-MM-dd HH:mm:ss".
+     * @param id       a file ID.
+     * @param owner    an entity's master.
+     * @param fileName  a name.
+     * @param body  bytes building a body of file.
+     * @param date  an arbitrary date as a string "yyyy-MM-dd HH:mm:ss".
+     * @return  a new FileEntity object with properties specified.
+     */
+    public static FileEntity getEntity(Long id, @NotNull UserEntity owner, String fileName, byte[] body, String date) {
+        FileEntity entity = new FileEntity();
+        entity.setFileId(id);
+        entity.setFileName(fileName);
+        entity.setSize((long) body.length);
+        entity.setOwner(owner);
+        entity.setBody(body);
+        try {
+            entity.setUploadDate(
+                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date));
+        } catch (ParseException e) {
+            entity.setUploadDate(new Date());
+        }
+        return entity;
     }
 
 }
