@@ -76,9 +76,11 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      * Serves semifinished data for a limited list of files owned by a pointed user.
      * @param username a name of owning user.
      * @param limit    a number of files to be listed.
-     * @return  a list of arrays of objects, each array containing filename and size values,
-      * that correspond to properties of a {@link FileInfo} DTO, the list is
-      * restricted with a limit and ordered by upload date from the newest.
+     * @return  a list of arrays of objects, each array containing
+      * (String) filename and (Integer) size values,
+      * that correspond to properties of a {@link FileInfo} DTO, describing each
+      * file it the list which is restricted with a limit
+      * and ordered by upload date from the newest.
      */
     @Query(value = "SELECT file_name, size FROM files " +
             "WHERE owner_user_id = (SELECT user_id FROM users WHERE username =:username) " +

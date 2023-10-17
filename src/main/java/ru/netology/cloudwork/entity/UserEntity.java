@@ -72,11 +72,4 @@ public class UserEntity {
         this(username, password, Role.USER);
     }
 
-    public List<FileInfo> getFileList(int limit) {
-        return files.stream()
-                .sorted(Comparator.comparing(FileEntity::getUploadDate).reversed())
-                .map(FileEntity::toFileInfo)
-                .limit(limit)
-                .toList();
-    }
 }

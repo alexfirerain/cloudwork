@@ -63,14 +63,6 @@ public class FileEntity {
     }
 
     /**
-     * A utility rendering a {@link FileInfo} DTO corresponding to the entity.
-     * @return  a new FileInfo object with name and size of the FileEntity.
-     */
-    public FileInfo toFileInfo() {
-        return new FileInfo(fileName, size);
-    }
-
-    /**
      * An auxiliary generator of FileEntities explicitly setting ID, ignoring file type,
      * and setting a date as is defined by a string looking like "yyyy-MM-dd HH:mm:ss".
      * @param id       a file ID.

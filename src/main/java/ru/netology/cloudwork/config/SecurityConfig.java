@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -24,32 +25,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .httpBasic()
-                    .disable()
-                .cors()
-                    .and()
-                .csrf()
-                    .disable()
+                .httpBasic().disable()
+                .formLogin().disable()
+                .cors().and()
+                .csrf().disable()
                 .addFilterBefore(tokenFilter, LogoutFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, TokenFilter.class)
                 .authorizeHttpRequests()
                     .requestMatchers("/login").permitAll()
-                    .anyRequest().authenticated()
-                        .and()
+                    .anyRequest().authenticated().and()
+                    .anonymous().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .logout()
-//                .disable()
 //                .clearAuthentication(true)
                     .addLogoutHandler(cloudworkLogoutHandler)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
-                .logoutUrl("/logout")
-//                .permitAll()
-//                .logoutSuccessHandler(cloudworkLogoutHandler)
-//                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
-//                    userService.terminateSession(authentication.getName());
-//                    SecurityContextHolder.clearContext();
-//                    httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-//                })
                 .and()
                 .build();
     }
