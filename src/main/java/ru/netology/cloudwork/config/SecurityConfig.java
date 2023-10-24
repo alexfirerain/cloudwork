@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import ru.netology.cloudwork.filter.CloudworkLogoutHandler;
 import ru.netology.cloudwork.filter.ExceptionHandlerFilter;
@@ -37,10 +36,10 @@ public class SecurityConfig {
                     .anonymous().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .logout()
-//                .clearAuthentication(true)
+                    .clearAuthentication(true)
                     .addLogoutHandler(cloudworkLogoutHandler)
                     .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
+                    .deleteCookies("JSESSIONID")    // do we use them?
                 .and()
                 .build();
     }

@@ -65,7 +65,8 @@ public class UserManager implements UserDetailsService {
     }
 
     public boolean isUserPresent(String username) {
-        return userRepository.findByUsername(username).isPresent();
+        return userRepository.existsByUsername(username);
+//                findByUsername(username).isPresent();
     }
 
     /**
@@ -79,10 +80,10 @@ public class UserManager implements UserDetailsService {
     public UserInfo findUserByToken(String token) {
         return token == null ? null :
                 userRepository
-                .findByAccessToken(token)
-                .map(UserInfo::new)
-                .orElse(null);
-    }
+                    .findByAccessToken(token)
+                    .map(UserInfo::new)
+                    .orElse(null);
+        }
 
     /**
      * Returns a token string which saved in DB for the user specified.

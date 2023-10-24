@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.netology.cloudwork.model.LoggedIn;
@@ -21,6 +22,8 @@ import ru.netology.cloudwork.service.AuthChecker;
 import ru.netology.cloudwork.service.UserManager;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -63,7 +66,6 @@ public class TokenFilter extends OncePerRequestFilter {
     }
 
 
-
     /**
      * Looks through incoming requests for tokens in their {@link #TOKEN_HEADER}.
      * When it finds no token, bypasses the request.
@@ -79,17 +81,16 @@ public class TokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
-        boolean toBeAuthenticated = !"/login".equals(request.getServletPath());
 
-        if (toBeAuthenticated) {
+        if ("/login".equals(request.getServletPath())) {
+            log.debug("Bypassing request to \"/login\" endpoint");
+        } else {
             String token = extractToken(request);
             log.debug("Token in the request filtered: " + token);
-
             UserInfo user = userManager.findUserByToken(token);
-
             if (user == null) {
                 log.warn("No mapped user, invalid token met");
-                throw new BadCredentialsException("Жетон не принадлежит активной сессии CloudWork");
+                throw new BadCredentialsException("Сеанс пользователя завершён.");
             }
             log.trace("User by token found: {}", user.getUsername());
             LoggedIn auth = (LoggedIn) authChecker.authenticate(new LoggedIn(user));

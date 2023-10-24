@@ -21,6 +21,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      */
     Optional<UserEntity> findByUsername(String username);
 
+    @Query("SELECT u.accessToken FROM UserEntity u WHERE u.username = :username")
+    Optional<String> findTokenByUsername(@NotNull @Param("username") String username);
+
     /**
      * Finds and returns the {@link UserEntity} by its current session token.
      * @param accessToken a string being used as an identifying token.
@@ -45,4 +48,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("DELETE UserEntity u WHERE u.username = :name")
     void deleteByUsername(@NotNull @Param("name") String name);
 
+    boolean existsByUsername(@NotNull @Param("username") String username);
 }

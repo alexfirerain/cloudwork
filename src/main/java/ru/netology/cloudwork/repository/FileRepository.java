@@ -17,6 +17,8 @@ import java.util.Optional;
  * The FileRepository is ruling in the Kingdom of Files.
  * Files are stored in some kind of DataBase, but JPA magic does not care
  * of its actual implementation since it masters the art of HQL.
+ * All methods do but {@link #listFiles(String, int)} which is relying
+ * on SQL native syntax to extract accurate information needed.
  */
 @Repository
 @Transactional
@@ -84,7 +86,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      */
     @Query(value = "SELECT file_name, size FROM files " +
             "WHERE owner_user_id = (SELECT user_id FROM users WHERE username =:username) " +
-            "ORDER BY upload_date LIMIT :limit",
+            "ORDER BY upload_date DESC LIMIT :limit",
             nativeQuery = true)
     List<Object[]> listFiles(@Param("username") String username, @Param("limit") int limit);
 
