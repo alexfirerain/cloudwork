@@ -36,7 +36,7 @@ public class UserPreloader implements CommandLineRunner {
 //        if (users == null) return;
         users.stream()
                 .filter(x -> !userManager.purgeSession(x.getUsername()))
-                .forEach(userManager::createUser);
+                .forEach(userManager::putUser);
 
     }
 }

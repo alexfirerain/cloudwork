@@ -48,5 +48,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("DELETE UserEntity u WHERE u.username = :name")
     void deleteByUsername(@NotNull @Param("name") String name);
 
+    /**
+     * Reports whether user with a given name is present in the DB or not.
+     * @param username a name of user in question.
+     * @return  {@code true} if there's a user with name specified, the opposite otherwise.
+     */
     boolean existsByUsername(@NotNull @Param("username") String username);
+
+    @Query("SELECT u.userId FROM UserEntity u WHERE u.username = :username")
+    Optional<Long> findIdByUsername(@NotNull @Param("username") String username);
 }

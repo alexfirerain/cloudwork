@@ -43,7 +43,6 @@ public class FileController {
         String client = principal.getName();    // there was still smarter way of doing this
         log.debug("Requested listing {} files for {}.", limit, client);  // TODO: систематизировать уровни представления
         return fileService.listFiles(client, limit);
-
     }
 
     /**

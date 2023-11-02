@@ -36,7 +36,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String authorities;
 
-    @OneToMany(mappedBy ="owner", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy ="owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FileEntity> files;
 
     private boolean accountExpired = false;

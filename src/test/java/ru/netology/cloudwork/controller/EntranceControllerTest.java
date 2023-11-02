@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ru.netology.cloudwork.dto.LoginResponse;
-import ru.netology.cloudwork.service.UserService;
+import ru.netology.cloudwork.service.CloudworkAuthorizationService;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,18 +16,18 @@ import static ru.netology.cloudwork.TestData.*;
 class EntranceControllerTest {
 
     private EntranceController entranceController;
-    private final UserService userService = mock(UserService.class);
+    private final CloudworkAuthorizationService cloudworkAuthorizationService = mock(CloudworkAuthorizationService.class);
 
     private final LoginResponse TOKEN_RESPONSE = new LoginResponse("new token");
 
     @BeforeEach
     void setup() {
-        entranceController = new EntranceController(userService);
-        when(userService.initializeSession(LOGIN_REQUEST))
+        entranceController = new EntranceController(cloudworkAuthorizationService);
+        when(cloudworkAuthorizationService.initializeSession(LOGIN_REQUEST))
                 .thenReturn(new LoginResponse("new token"));
-        when(userService.initializeSession(LOGIN_REQUEST_BAD_PASSWORD))
+        when(cloudworkAuthorizationService.initializeSession(LOGIN_REQUEST_BAD_PASSWORD))
                 .thenThrow(new BadCredentialsException("Неверный пароль."));
-        when(userService.initializeSession(LOGIN_REQUEST_BAD_LOGIN))
+        when(cloudworkAuthorizationService.initializeSession(LOGIN_REQUEST_BAD_LOGIN))
                 .thenThrow(new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
 
     }

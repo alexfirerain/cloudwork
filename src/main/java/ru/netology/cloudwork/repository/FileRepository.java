@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.entity.FileEntity;
+import ru.netology.cloudwork.entity.UserEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -90,4 +91,12 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
             nativeQuery = true)
     List<Object[]> listFiles(@Param("username") String username, @Param("limit") int limit);
 
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END " +
+            "FROM FileEntity f JOIN f.owner u " +
+            "WHERE f.fileName = :fileName AND u.username = :username")
+    boolean existsByOwnerAndFileName(@NotNull @Param("username") String owner, @NotNull @Param("fileName") String fileName);
+
+    @Modifying
+    @Query("DELETE FROM FileEntity f WHERE f.owner = :userToDelete")
+    void deleteAllForUser(@NotNull @Param("userToDelete") UserEntity userToDelete);
 }

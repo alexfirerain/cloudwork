@@ -9,11 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.netology.cloudwork.dto.LoginResponse;
-import ru.netology.cloudwork.model.UserInfo;
-import ru.netology.cloudwork.service.AuthChecker;
-import ru.netology.cloudwork.service.FileService;
-import ru.netology.cloudwork.service.UserManager;
-import ru.netology.cloudwork.service.UserService;
+import ru.netology.cloudwork.service.CloudworkAuthorizationService;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.netology.cloudwork.TestData.LOGIN_REQUEST;
-import static ru.netology.cloudwork.TestData.TEST_USER;
 
 @AutoConfigureMockMvc
 @WebMvcTest
@@ -32,7 +27,7 @@ public class EntranceControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private CloudworkAuthorizationService authorizationService;
 
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -41,7 +36,7 @@ public class EntranceControllerIntegrationTest {
     void success_login() throws Exception {
 
         String TOKEN = "new token";
-        when(userService.initializeSession(LOGIN_REQUEST))
+        when(authorizationService.initializeSession(LOGIN_REQUEST))
                 .thenReturn(new LoginResponse(TOKEN));
 //        when(userManager.loadUserByUsername(LOGIN_REQUEST.getLogin()))
 //                .thenReturn(new UserInfo(TEST_USER));
@@ -56,7 +51,7 @@ public class EntranceControllerIntegrationTest {
                 .andExpect(jsonPath("$.auth-token").value(TOKEN))
                 .andReturn();
 
-        verify(userService).initializeSession(LOGIN_REQUEST);
+        verify(authorizationService).initializeSession(LOGIN_REQUEST);
     }
 
 

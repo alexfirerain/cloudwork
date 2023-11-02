@@ -1,5 +1,6 @@
 package ru.netology.cloudwork.service;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,8 +14,6 @@ import ru.netology.cloudwork.model.UserInfo;
 import ru.netology.cloudwork.repository.FileRepository;
 import ru.netology.cloudwork.repository.UserRepository;
 
-import java.util.Optional;
-
 /**
  * A manager for user storing and getting.
  */
@@ -25,7 +24,9 @@ public class UserManager implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
-    private FileRepository fileRepository;
+    private final FileRepository fileRepository;
+
+
 
     /**
      * Locates the user based on the username against DB. The <code>UserDetails</code>
@@ -39,14 +40,8 @@ public class UserManager implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.trace("UserService is asked for '{}'", username);
-        Optional<UserEntity> entity = userRepository.findByUsername(username);
-
-        UserInfo userInfo = entity.map(UserInfo::new).orElseThrow(() -> {
-            log.warn("Username '{}' not found", username);
-            return new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
-        });
+        UserInfo userInfo = new UserInfo(getUserByUsername(username));
         log.trace("User {} found in the base", userInfo);
-
         if (userInfo.getAuthorities().isEmpty()) {
             log.warn("User '{}'s authorities not defined", username);
             throw new UsernameNotFoundException("Полномочия пользователя не определены.");
@@ -57,22 +52,23 @@ public class UserManager implements UserDetailsService {
     /**
      * Takes a user entity, encrypts its password and transfers
      * to repository for saving.
+     *
      * @param user an almost ready entity.
      */
-    public void createUser(UserEntity user) {
+    public void putUser(UserEntity user) {
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     public boolean isUserPresent(String username) {
         return userRepository.existsByUsername(username);
-//                findByUsername(username).isPresent();
     }
 
     /**
      * Returns UserInfo representation of the user
      * mapped to the token in question
      * or null if none.
+     *
      * @param token token to be identified as a mark of user session.
      * @return a UserDetail-featured object for the user mapped to the token
      * or {@code null} if the token is null or not found in the DB.
@@ -80,27 +76,28 @@ public class UserManager implements UserDetailsService {
     public UserInfo findUserByToken(String token) {
         return token == null ? null :
                 userRepository
-                    .findByAccessToken(token)
-                    .map(UserInfo::new)
-                    .orElse(null);
-        }
+                        .findByAccessToken(token)
+                        .map(UserInfo::new)
+                        .orElse(null);
+    }
 
     /**
      * Returns a token string which saved in DB for the user specified.
+     *
      * @param username the user in question.
-     * @return  the string that is user's token, including {@code null} if it is null.
-     * @throws UsernameNotFoundException if an absent user is requested for.
+     * @return the string that is user's token, including {@code null}
+     * both if it is null or specified user is absent.
+     * @throws IllegalArgumentException if a given user is null.
      */
-    public String findTokenByUsername(String username) {
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Юзернейм не найден: " + username));
-        return user.getAccessToken();
+    public String findTokenByUsername(@NotNull String username) {
+        return userRepository.findTokenByUsername(username).orElse(null);
     }
 
     /**
      * Sets a specified token string (or {@code null}) into relation with the certain user.
+     *
      * @param username a user who is to be tokenized.
-     * @param token a token being assigned to the user's session.
+     * @param token    a token being assigned to the user's session.
      */
     public void setToken(String username, String token) {
         userRepository.setAccessToken(username, token);
@@ -109,6 +106,7 @@ public class UserManager implements UserDetailsService {
 
     /**
      * Sets token corresponding to the user to null.
+     *
      * @param username the user whose session to be nullified.
      * @return {@code false} if no user with the given name in DB,
      * {@code true} if such a user exists and whose token is set to null now.
@@ -124,21 +122,27 @@ public class UserManager implements UserDetailsService {
     /**
      * Deletes from DB a user with name specified, also all his/her files.
      * If such a user is not there, throws a corresponding exception.
+     *
      * @param name the username of a user to be deleted.
      * @throws UsernameNotFoundException if no user with such a name found.
      */
     public void deleteUser(String name) {
-        UserEntity userToDelete = userRepository.findByUsername(name).orElseThrow(() -> {
-            log.warn("Username '{}' not found", name);
-            return new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован.");
-        });
-
-        fileRepository.deleteAllById(
-                userToDelete.getFiles().stream()
-                        .map(FileEntity::getFileId).toList()
-        );
-
-        userRepository.deleteById(userToDelete.getUserId());
+        long deletingUserID = userRepository.findIdByUsername(name)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователя '%s' нет в базе.".formatted(name)));
+        userRepository.deleteById(deletingUserID);
     }
 
+    /**
+     * Delivers the {@link UserEntity} corresponding to a username given.
+     *
+     * @param username                      a user's name given.
+     * @return a UserEntity from DB, having the specified username.
+     * @throws UsernameNotFoundException if no entity with the given login found.
+     */
+    public UserEntity getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
+                                .formatted(username)));
+    }
 }

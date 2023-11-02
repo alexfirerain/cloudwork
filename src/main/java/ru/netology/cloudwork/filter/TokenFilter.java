@@ -9,25 +9,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.netology.cloudwork.model.LoggedIn;
-import ru.netology.cloudwork.model.UserInfo;
-import ru.netology.cloudwork.service.AuthChecker;
-import ru.netology.cloudwork.service.UserManager;
+import ru.netology.cloudwork.service.CloudworkAuthorizationService;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
     /**
@@ -42,16 +31,11 @@ public class TokenFilter extends OncePerRequestFilter {
      */
     private static String TOKEN_PREFIX;
 
-    /**
-     * A custom {@link AuthenticationManager
-     * AuthenticationManager} implementation in the CloudWork.
-     */
-    private final AuthChecker authChecker;
-    /**
-     * A custom {@link UserDetailsService
-     * UserDetailsService} implementation in the CloudWork.
-     */
-    private final UserManager userManager;
+    private final CloudworkAuthorizationService authorizationService;
+
+    public TokenFilter(CloudworkAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
 
     @Autowired
     public void setTokenHeader(@Qualifier("header") String tokenHeader) {
@@ -64,7 +48,6 @@ public class TokenFilter extends OncePerRequestFilter {
         TOKEN_PREFIX = tokenPrefix;
         log.debug("Token prefix defined as '{}'", TOKEN_PREFIX);
     }
-
 
     /**
      * Looks through incoming requests for tokens in their {@link #TOKEN_HEADER}.
@@ -79,28 +62,17 @@ public class TokenFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
-                                    @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain) throws ServletException, IOException {
-
+                                                      @NotNull HttpServletResponse response,
+                                                      @NotNull FilterChain filterChain) throws ServletException, IOException {
         if ("/login".equals(request.getServletPath())) {
             log.debug("Bypassing request to \"/login\" endpoint");
         } else {
             String token = extractToken(request);
             log.debug("Token in the request filtered: " + token);
-            UserInfo user = userManager.findUserByToken(token);
-            if (user == null) {
-                log.warn("No mapped user, invalid token met");
-                throw new BadCredentialsException("Сеанс пользователя завершён.");
-            }
-            log.trace("User by token found: {}", user.getUsername());
-            LoggedIn auth = (LoggedIn) authChecker.authenticate(new LoggedIn(user));
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            log.debug("User '{}' got authenticated for the request", auth.getPrincipal());
+            authorizationService.authenticateByToken(token);
         }
-
         filterChain.doFilter(request, response);
     }
-
 
     /**
      * Extracts from the request a matter of token in {@link #TOKEN_HEADER}

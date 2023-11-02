@@ -5,8 +5,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The implementation of {@link Authentication}, a representation of
@@ -15,21 +15,25 @@ import java.util.Set;
  * along with its set of roles, and it can be authenticated or not.
  */
 @Data
-public class LoggedIn implements Authentication {
+public class CloudworkAuthorization implements Authentication {
     private String username;
     private String password;
     private boolean authenticated;
     private Set<Role> authorities;
 
-    public LoggedIn(UserInfo userDetails, boolean isOn) {
+    public CloudworkAuthorization(UserInfo userDetails, boolean isOn) {
         this.username = userDetails.getUsername();
         this.password = userDetails.getPassword();
         this.authenticated = isOn;
-        authorities = new HashSet<>();      // can't solve casting otherway
-        userDetails.getAuthorities().forEach(e -> authorities.add((Role) e));
+        authorities = userDetails.getAuthorities().stream()
+                .map(e -> (Role) e).collect(Collectors.toUnmodifiableSet());
     }
 
-    public LoggedIn(UserInfo userDetails) {
+    /**
+     * The constructor crafting a non-authenticated authentication instance.
+     * @param userDetails   user data set to be authenticated.
+     */
+    public CloudworkAuthorization(UserInfo userDetails) {
         this(userDetails, false);
     }
 
@@ -62,7 +66,6 @@ public class LoggedIn implements Authentication {
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
         this.authenticated = isAuthenticated;
     }
-
 
     @Override
     public String getName() {

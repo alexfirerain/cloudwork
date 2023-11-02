@@ -3,13 +3,10 @@ package ru.netology.cloudwork.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.netology.cloudwork.dto.LoginResponse;
 import ru.netology.cloudwork.dto.LoginRequest;
-import ru.netology.cloudwork.service.UserService;
-
-import java.security.Principal;
+import ru.netology.cloudwork.service.CloudworkAuthorizationService;
 
 /**
  * A controller for user login and logout.
@@ -19,24 +16,24 @@ import java.security.Principal;
 public class EntranceController {
 
     /**
-     * A service for managing users and sessions, this controller directly works with.
+     * A service for managing users sessions.
      */
-    private final UserService userService;
+    private final CloudworkAuthorizationService authorizationService;
 
     /**
-     * Creates a new {@link EntranceController} linked with an instance of {@link UserService}
+     * Creates a new {@link EntranceController} linked with an instance of {@link CloudworkAuthorizationService}
      * to address when defining user's rights to enter or not.
-     * @param userService a {@link UserService}.
+     * @param authorizationService a {@link CloudworkAuthorizationService}.
      */
-    public EntranceController(UserService userService) {
-        this.userService = userService;
+    public EntranceController(CloudworkAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
     }
 
     /**
      * This controller method handles a POST request to "/login" endpoint.
      * It receives a validated {@link LoginRequest} object as the request body
-     * and calls the "{@link UserService#initializeSession(LoginRequest) initializeSession()}" method
-     * of the {@link #userService} to generate a LoginResponse object
+     * and calls the "{@link CloudworkAuthorizationService#initializeSession(LoginRequest) initializeSession()}" method
+     * of the {@link #authorizationService} to generate a LoginResponse object
      * containing a token offer.
      * @param loginRequest a {@link LoginRequest JSON-formed request} to the application containing
      *                     login and password pair.
@@ -45,10 +42,8 @@ public class EntranceController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("Controller received {}", loginRequest);
-
-        LoginResponse tokenOffer = userService.initializeSession(loginRequest);
+        LoginResponse tokenOffer = authorizationService.initializeSession(loginRequest);
         log.trace("Controller returns {}", tokenOffer);
-
         return ResponseEntity.ok(tokenOffer);
     }
 
@@ -58,8 +53,8 @@ public class EntranceController {
      * @return  OK response entity.
      */
     @GetMapping("/login")
-    public ResponseEntity<?> login() {
-        log.info("GET request to login endpoint");
+    public ResponseEntity<?> logoutRedirection() {
+        log.info("a posterior GET request to login endpoint");
         return ResponseEntity.ok().build();
     }
 
