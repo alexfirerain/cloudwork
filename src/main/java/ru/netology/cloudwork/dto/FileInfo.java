@@ -1,9 +1,8 @@
 package ru.netology.cloudwork.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.netology.cloudwork.entity.FileEntity;
 
 /**
  * A presentation of file's name and size
@@ -13,6 +12,7 @@ import ru.netology.cloudwork.entity.FileEntity;
 @AllArgsConstructor
 public class FileInfo {
     private String filename;
+    @PositiveOrZero
     private long size;
 
     /**

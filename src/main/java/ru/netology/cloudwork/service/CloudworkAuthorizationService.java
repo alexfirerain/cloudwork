@@ -56,7 +56,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
     public LoginResponse initializeSession(LoginRequest loginRequest) {
         String usernameRequested = loginRequest.getLogin();
         log.trace("Logging {} in", usernameRequested);
-        UserInfo user = (UserInfo) userManager.loadUserByUsername(usernameRequested);
+        UserDetails user = userManager.loadUserByUsername(usernameRequested);
         if (!encoder.matches(loginRequest.getPassword(), user.getPassword())) {
             log.trace("Password provided makes no match");
             throw new BadCredentialsException("Неверный пароль.");
@@ -64,10 +64,10 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
         String token = userManager.findTokenByUsername(usernameRequested);
         if (token == null) {
             token = generateTokenFor(user);
-            log.debug("Token '{}' generated for '{}'", token, usernameRequested);
+            log.debug("Token '{}' generated for '{}'. A session established...", token, usernameRequested);
             userManager.setToken(usernameRequested, token);
         } else {
-            log.debug("Token '{}' already exists for '{}'", token, usernameRequested);
+            log.debug("User '{}' has already been logged in with '{}'. Joining the session...", usernameRequested, token);
         }
         return new LoginResponse(token);
     }
@@ -75,7 +75,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
     public void authenticateByToken(String token) {
         UserInfo user = userManager.findUserByToken(token);
         if (user == null) {
-            log.warn("No mapped user, invalid token met");
+            log.warn("No mapped user for the token");
             throw new BadCredentialsException("Сеанс пользователя завершён.");
         }
         log.trace("User by token found: {}", user.getUsername());

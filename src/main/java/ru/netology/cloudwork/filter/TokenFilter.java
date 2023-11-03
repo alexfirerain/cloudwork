@@ -62,8 +62,8 @@ public class TokenFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
-                                                      @NotNull HttpServletResponse response,
-                                                      @NotNull FilterChain filterChain) throws ServletException, IOException {
+                                    @NotNull HttpServletResponse response,
+                                    @NotNull FilterChain filterChain) throws ServletException, IOException {
         if ("/login".equals(request.getServletPath())) {
             log.debug("Bypassing request to \"/login\" endpoint");
         } else {
@@ -84,7 +84,6 @@ public class TokenFilter extends OncePerRequestFilter {
      */
     private String extractToken(HttpServletRequest request) {
         String token = request.getHeader(TOKEN_HEADER);
-
         return token == null || token.isBlank() || !token.startsWith(TOKEN_PREFIX) ?
                 null : token.substring(TOKEN_PREFIX.length());
     }
