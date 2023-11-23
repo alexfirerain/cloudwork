@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - preConditions:
+      - onFail: WARN
+      - onFailMessage: "Таблица 'files' уже существует и не будет создаваться"
+      - not:
+          - tableExists:
+              tableName: files
+
+  - changeSet:
+      id: create_files_table
+      author: alexfirerain
+      changes:
+        - createTable:
+            tableName: files
+            columns:
+              - column:
+                  name: file_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  autoIncrement: true
+              - column:
+                  name: file_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                   name: size
+                   type: BIGINT
+                   constraints:
+                     nullable: false
+                     checkConstraint: "size >= 0"
+              - column:
+                   name: file_type
+                   type: VARCHAR(255)
+              - column:
+                   name: owner_user_id
+                   type: BIGINT
+                   constraints:
+                     nullable: false
+                     foreignKeyName: fk_files_owner_user_id
+                     references: users(user_id)
+                     deleteCascade: true
+              - column:
+                  name: upload_date
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: body
+                  type: LONGBLOB
+#
+        - addUniqueConstraint:
+            tableName: files
+            columnNames: file_name, owner_user_id
+            constraintName: uk_files_file_name_owner_user_id
+

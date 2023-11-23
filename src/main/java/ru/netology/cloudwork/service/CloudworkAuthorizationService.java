@@ -69,6 +69,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
         } else {
             log.debug("User '{}' has already been logged in with '{}'. Joining the session...", usernameRequested, token);
         }
+        log.info("CloudWork session for user '{}' started.", usernameRequested);
         return new LoginResponse(token);
     }
 
@@ -91,9 +92,10 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      */
     public void terminateSession(String username) {
         log.debug("Terminating {} session", username);
-        log.info(userManager.purgeSession(username) ?
-                "Session for '{}' terminated" :
-                "User '{}' not found", username);
+        if (userManager.purgeSession(username))
+            log.info("Session for '{}' terminated", username);
+        else
+            log.debug("User '{}' not found", username);
     }
 
     /**
@@ -139,7 +141,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
             throw new LockedException("Аккаунт заблокирован");
 
         if (userManager.findTokenByUsername(user.getUsername()) == null)
-            throw new BadCredentialsException("Для этого юзера нет активного токена");
+            throw new BadCredentialsException("Для этого юзаря нет активного токена");
 
         authentication.setAuthenticated(true);
 

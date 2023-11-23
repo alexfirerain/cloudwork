@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - preConditions:
+      - onFail: WARN
+      - onFailMessage: "Таблицы 'users' нет, тестовые записи не добавляются"
+      - tableExists:
+          tableName: users
+
+  - changeSet:
+      id: fill_users
+      author: alexfirerain
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: user
+              - column:
+                  name: password
+                  value: $2a$10$22qNg/GoEkSR9AeXL0lZo.5gdB.FqzQW8NwxRgBa9p3cSeFd/4voG
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: who_user
+              - column:
+                  name: password
+                  value: $2a$10$hJeaau2Wn8SZJ1as3HST8.X/TrXWk5gi1LkMfbWnMggE1rRb9ny2q

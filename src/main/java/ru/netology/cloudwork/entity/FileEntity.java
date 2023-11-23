@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-import ru.netology.cloudwork.dto.FileInfo;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -53,6 +52,17 @@ public class FileEntity {
     @Column(name = "upload_date", nullable = false)
     private Date uploadDate;
 
+    @Column(name = "update_date", nullable = false)
+    private Date updateDate;
+
+    /**
+     * A constructor for practical creation of file entity based on the
+     * data normally got to the app when a file is uploaded.
+     * @param owner    a name of user who is uploading.
+     * @param fileName a name of file being loaded.
+     * @param file     a MultipartFile entity being loaded.
+     * @throws IOException  if the process occur to abort for some why.
+     */
     public FileEntity(@NotNull UserEntity owner, String fileName, MultipartFile file) throws IOException {
         this.fileName = fileName;
         this.size = file.getSize();
@@ -60,6 +70,7 @@ public class FileEntity {
         this.owner = owner;
         this.body = file.getBytes();
         this.uploadDate = new Date();
+        this.updateDate = uploadDate;
     }
 
     /**
@@ -72,7 +83,7 @@ public class FileEntity {
      * @param date  an arbitrary date as a string "yyyy-MM-dd HH:mm:ss".
      * @return  a new FileEntity object with properties specified.
      */
-    public static FileEntity getEntity(Long id, @NotNull UserEntity owner, String fileName, byte[] body, String date) {
+    public static FileEntity getForData(Long id, @NotNull UserEntity owner, String fileName, byte[] body, String date) {
         FileEntity entity = new FileEntity();
         entity.setFileId(id);
         entity.setFileName(fileName);
@@ -85,6 +96,7 @@ public class FileEntity {
         } catch (ParseException e) {
             entity.setUploadDate(new Date());
         }
+        entity.setUpdateDate(entity.getUploadDate());
         return entity;
     }
 

@@ -2,33 +2,51 @@ version: "3"
 services:
   cloudwork:
     container_name:
-      cloudwork
+      cloudwork_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "9090:9090"
     volumes:
-      - ./log:/log
+      - /var/cloudwork/log:/log
+    networks:
+      - cloudnet
     depends_on:
       - database
 
   frontend:
     container_name:
-      fro
+      cloudwork_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    networks:
+      - cloudnet
+    restart:
+      always
 
   database:
     container_name:
-      mysqld
+      db_mysql
+    image:
+      mysql
     ports:
       - "3306:3306"
+    networks:
+      - cloudnet
     volumes:
-      - /mysql_data:/var/lib/mysql
+      - /var/mysql_data:/var/lib/mysql
     command:
       - "--max-allowed-packet=814743552"
     environment:
       MYSQL_USERNAME: root
-      MYSQL_PASSWORD: fuck
-      MYSQL_ROOT_PASSWORD: fuck
+      MYSQL_ROOT_PASSWORD: word
       MYSQL_DATABASE: storage
     restart:
       always
+
+networks:
+  cloudnet:

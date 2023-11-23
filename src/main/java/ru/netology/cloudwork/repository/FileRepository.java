@@ -45,7 +45,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      * @param newName   a name the file will bear from now on.
      */
     @Modifying
-    @Query("UPDATE FileEntity f SET f.fileName = :newName " +
+    @Query("UPDATE FileEntity f SET f.fileName = :newName, f.updateDate = NOW() " +
             "WHERE f.fileId = :id")
     void renameFile(@Param("id") long id,
                     @NotNull @Param("newName") String newName);

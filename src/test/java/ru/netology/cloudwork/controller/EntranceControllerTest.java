@@ -28,7 +28,7 @@ class EntranceControllerTest {
         when(cloudworkAuthorizationService.initializeSession(LOGIN_REQUEST_BAD_PASSWORD))
                 .thenThrow(new BadCredentialsException("Неверный пароль."));
         when(cloudworkAuthorizationService.initializeSession(LOGIN_REQUEST_BAD_LOGIN))
-                .thenThrow(new UsernameNotFoundException("Пользователь с таким именем не зарегистрирован."));
+                .thenThrow(new UsernameNotFoundException("Пользователь %s не зарегистрирован.".formatted(WRONG_USERNAME)));
 
     }
     @Test
@@ -40,16 +40,19 @@ class EntranceControllerTest {
 
     @Test
     void login_incorrect() {
-        Assertions.assertThrows(BadCredentialsException.class,
-                () -> entranceController.login(LOGIN_REQUEST_BAD_PASSWORD));
+        var exception = Assertions.assertThrows(BadCredentialsException.class,
+                                            () -> entranceController.login(LOGIN_REQUEST_BAD_PASSWORD));
+        Assertions.assertEquals("Неверный пароль.",
+                                            exception.getLocalizedMessage());
     }
 
     @Test
     void wrong_username_denial() {
-        Assertions.assertThrows(UsernameNotFoundException.class,
-                () -> entranceController.login(LOGIN_REQUEST_BAD_LOGIN));
+        var exception = Assertions.assertThrows(UsernameNotFoundException.class,
+                                    () -> entranceController.login(LOGIN_REQUEST_BAD_LOGIN));
+        Assertions.assertEquals("Пользователь %s не зарегистрирован.".formatted(WRONG_USERNAME),
+                                    exception.getLocalizedMessage());
     }
-
 
 
 }

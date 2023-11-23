@@ -13,7 +13,7 @@ import ru.netology.cloudwork.filter.ExceptionHandlerFilter;
 import ru.netology.cloudwork.filter.TokenFilter;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 

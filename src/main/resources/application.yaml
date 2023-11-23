@@ -5,9 +5,9 @@ server:
   
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/storage?createDatabaseIfNotExist=true
+    url: jdbc:mysql://db_mysql:3306/storage?createDatabaseIfNotExist=true
     username: root
-    password: fuck
+    password: word
 
   sql:
     init:
@@ -15,7 +15,7 @@ spring:
       mode: always
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
 
@@ -24,11 +24,14 @@ spring:
       max-file-size: 777MB
       max-request-size: 777MB
 
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+
 logging:
   level:
     org.springframework: INFO
-    ru.netology: DEBUG
-    org.springframework.security.web.FilterChainProxy: DEBUG
+    ru.netology: INFO
   pattern:
     console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
     file: "%d %p %c{1.} [%t] %m%n"
@@ -37,7 +40,7 @@ logging:
 
 application:
   user-preloader:
-    enabled: true
+    enabled: false
   front-url: >
     http://localhost:8080,
     http://localhost:8081

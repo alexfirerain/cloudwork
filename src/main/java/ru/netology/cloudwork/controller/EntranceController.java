@@ -41,7 +41,7 @@ public class EntranceController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        log.info("Controller received {}", loginRequest);
+        log.debug("Request to log in as '{}'", loginRequest.getLogin());
         LoginResponse tokenOffer = authorizationService.initializeSession(loginRequest);
         log.trace("Controller returns {}", tokenOffer);
         return ResponseEntity.ok(tokenOffer);
@@ -54,7 +54,7 @@ public class EntranceController {
      */
     @GetMapping("/login")
     public ResponseEntity<?> logoutRedirection() {
-        log.info("a posterior GET request to login endpoint");
+        log.debug("a posterior GET request to login endpoint");
         return ResponseEntity.ok().build();
     }
 

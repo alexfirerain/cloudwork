@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: /v1-yml/v1-1-users-table-creation.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: /v1-yml/v1-2-files-table-creation.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: /v1-yml/v1-3-fill-users-table.yaml
+      relativeToChangelogFile: true
+

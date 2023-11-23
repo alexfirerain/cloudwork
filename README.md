@@ -33,3 +33,19 @@ ___
 * _**контроллеры**_ считывают команду и данные из http-запроса, передают их на обработку сервисам и возвращают клиентскому приложению результат выполнения в виде http-ответа;
 * _**сервисы**_ отражают основной функционал приложения (такназыаемую "бизнес-логику");
 * _**репозитории**_ реализуют взаимодействию с СУБД, т.е. запрашивают данные из хранилища и сохраняют их в нём.
+
+Security filter chain: 
+* DisableEncodeUrlFilter
+* WebAsyncManagerIntegrationFilter
+* SecurityContextHolderFilter
+* HeaderWriterFilter
+* CorsFilter
+* ExceptionHandlerFilter
+* TokenFilter
+* LogoutFilter
+* RequestCacheAwareFilter
+* SecurityContextHolderAwareRequestFilter
+* SessionManagementFilter
+* ExceptionTranslationFilter
+* AuthorizationFilter
+

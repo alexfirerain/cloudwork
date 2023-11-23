@@ -8,14 +8,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.netology.cloudwork.entity.FileEntity;
 import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.model.UserInfo;
-import ru.netology.cloudwork.repository.FileRepository;
 import ru.netology.cloudwork.repository.UserRepository;
 
 /**
- * A manager for user storing and getting.
+ * A service for managing and getting user information
+ * such as assigned tokens for CloudWork sessions and {@link UserDetails}.
+ * It is a {@link UserDetailsService} usable by Spring Security Authentication mechanism.
+ * In CloudWork implementation this means communicating with {@link CloudworkAuthorizationService}.
  */
 @Service
 @Slf4j
@@ -24,8 +25,6 @@ public class UserManager implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
-    private final FileRepository fileRepository;
-
 
 
     /**
@@ -60,6 +59,11 @@ public class UserManager implements UserDetailsService {
         userRepository.save(user);
     }
 
+    /**
+     * Tells whether such a username is present in the DB.
+     * @param username a name of user to be checked.
+     * @return  boolean signifying user's presence.
+     */
     public boolean isUserPresent(String username) {
         return userRepository.existsByUsername(username);
     }
@@ -112,24 +116,9 @@ public class UserManager implements UserDetailsService {
      * {@code true} if such a user exists and whose token is set to null now.
      */
     public boolean purgeSession(String username) {
-        if (isUserPresent(username)) {
-            setToken(username, null);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Deletes from DB a user with name specified, also all his/her files.
-     * If such a user is not there, throws a corresponding exception.
-     *
-     * @param name the username of a user to be deleted.
-     * @throws UsernameNotFoundException if no user with such a name found.
-     */
-    public void deleteUser(String name) {
-        long deletingUserID = userRepository.findIdByUsername(name)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователя '%s' нет в базе.".formatted(name)));
-        userRepository.deleteById(deletingUserID);
+        if (!isUserPresent(username)) return false;
+        setToken(username, null);
+        return true;
     }
 
     /**

@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - preConditions:
+      - onFail: WARN
+      - onFailMessage: "Таблица 'users' уже существует и не будет создаваться"
+      - not:
+          - tableExists:
+              tableName: users
+
+  - changeSet:
+      id: create_user_table
+      author: alexfirerain
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  autoIncrement: true
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: authorities
+                  type: VARCHAR(255)
+                  defaultValue: 'USER'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_expired
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: locked
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credentials_expired
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: access_token
+                  type: VARCHAR(255)
+
+

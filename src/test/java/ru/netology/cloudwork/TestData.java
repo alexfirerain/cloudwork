@@ -4,10 +4,6 @@ import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.entity.FileEntity;
 import ru.netology.cloudwork.entity.UserEntity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class TestData {
 
     public static final String USERNAME = "user";
@@ -21,7 +17,7 @@ public class TestData {
 
     public static UserEntity TEST_USER = new UserEntity(USERNAME, PASSWORD);
 
-    public static FileEntity TEST_FILE = FileEntity.getEntity(
+    public static FileEntity TEST_FILE = FileEntity.getForData(
                 1L,
                 TEST_USER,
                 "test.txt",

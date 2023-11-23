@@ -105,9 +105,7 @@ public class FileService {
         long fileId = fileRepository.findFileIdByOwnerAndFilename(owner, filename)
                 .orElseThrow(() -> new FileNotFoundException("Не найдено файла '%s' у '%s'."
                         .formatted(filename, owner)));
-        if (fileRepository
-//                .findFileIdByOwnerAndFilename(owner, newName).isPresent())
-                .existsByOwnerAndFileName(owner, newName)) {
+        if (fileRepository.existsByOwnerAndFileName(owner, newName)) {
             log.warn("Denial of renaming {}: file named {} has already been stored for {}", filename, newName, owner);
             throw new FileAlreadyExistsException(("Невозможно переименовать '%s':" +
                     " файл с именем '%s' уже есть у'%s'.").formatted(filename, newName, owner));
