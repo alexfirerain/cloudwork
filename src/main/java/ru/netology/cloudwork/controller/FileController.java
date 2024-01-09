@@ -121,8 +121,8 @@ public class FileController {
                                         @RequestParam(name = "filename") String filename,
                                         @RequestBody @Valid RenameRequest newName) throws FileNotFoundException, FileAlreadyExistsException {
         String client = principal.getName();
-        log.debug("Requested file renaming: '{}' into '{}' for '{}'", filename, newName.getFilename(), client);
-        return fileService.renameFile(client, filename, newName.getFilename());
+        log.debug("Requested file renaming: '{}' into '{}' for '{}'", filename, newName.filename(), client);
+        return fileService.renameFile(client, filename, newName.filename());
     }
 
 

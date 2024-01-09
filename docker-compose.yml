@@ -10,6 +10,9 @@ services:
       - "9090:9090"
     volumes:
       - /var/cloudwork/log:/log
+    environment:
+      TZ: Europe/Moscow
+      SPRING_DATASOURCE_URL: jdbc:mysql://db_mysql:3306/storage?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8
     networks:
       - cloudnet
     depends_on:
@@ -45,6 +48,8 @@ services:
       MYSQL_USERNAME: root
       MYSQL_ROOT_PASSWORD: word
       MYSQL_DATABASE: storage
+      MYSQL_CHARACTER_SET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
     restart:
       always
 

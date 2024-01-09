@@ -9,6 +9,11 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
 import ru.netology.cloudwork.service.CloudworkAuthorizationService;
 
+/**
+ * A handler to process user exit from CloudWork.
+ * It is fired by Logout Filter and commands authorization service
+ * to terminate the current user session.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -20,10 +25,7 @@ public class CloudworkLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String user = authentication.getName();
         log.debug("Logging out '{}' in proper handler.", user);
-
         authorizationService.terminateSession(user);
-//        SecurityContextHolder.clearContext();
-
         response.setStatus(HttpServletResponse.SC_OK);
         log.info("User '{}' logged out.", user);
     }

@@ -29,19 +29,19 @@ public class ErrorControllerTest {
         when(exception.getLocalizedMessage()).thenReturn("User not found");
         ResponseEntity<ErrorDto> response = errorController.handleBadRequest(exception);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("User not found", Objects.requireNonNull(response.getBody()).getMessage());
+        assertEquals("User not found", Objects.requireNonNull(response.getBody()).message());
 
         // Test case 2: BadCredentialsException
         when(exception.getLocalizedMessage()).thenReturn("Invalid credentials");
         response = errorController.handleBadRequest(exception);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Invalid credentials", Objects.requireNonNull(response.getBody()).getMessage());
+        assertEquals("Invalid credentials", Objects.requireNonNull(response.getBody()).message());
 
         // Test case 3: ServletRequestBindingException
         when(exception.getLocalizedMessage()).thenReturn("Missing required parameter");
         response = errorController.handleBadRequest(exception);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Missing required parameter", Objects.requireNonNull(response.getBody()).getMessage());
+        assertEquals("Missing required parameter", Objects.requireNonNull(response.getBody()).message());
     }
 }
 

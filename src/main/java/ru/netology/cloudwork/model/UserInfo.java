@@ -1,8 +1,7 @@
 package ru.netology.cloudwork.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.netology.cloudwork.entity.UserEntity;
@@ -16,8 +15,7 @@ import java.util.stream.Collectors;
  * An implementation of UserDetails interface in the CloudWork user-management system.
  * Encapsulates properties relevant to authentication but not to file-storing logics.
  */
-@Setter
-@Getter
+@Data
 @AllArgsConstructor
 public class UserInfo implements UserDetails {
     private String username;

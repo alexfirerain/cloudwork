@@ -30,11 +30,9 @@ public class ErrorController {
                        BadCredentialsException.class,
                        ServletRequestBindingException.class })
     public ResponseEntity<ErrorDto> handleBadRequest(RuntimeException exception) {
-        String message = exception.getLocalizedMessage();
-        log.warn("A Bad-Request exception happened: {}", message);
-        return new ResponseEntity<>(
-                new ErrorDto(message),
-                HttpStatus.BAD_REQUEST);
+        ErrorDto response = new ErrorDto(exception);
+        log.warn("A Bad-Request exception happened: {}", response.message());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -45,12 +43,11 @@ public class ErrorController {
      */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorDto> handleAuthorizationFailure(RuntimeException exception) {
-        String message = exception.getLocalizedMessage();
-        log.warn("An Authorization exception happened: {}", message);
-        return new ResponseEntity<>(
-                new ErrorDto(message),
-                HttpStatus.UNAUTHORIZED);
+        ErrorDto response = new ErrorDto(exception);
+        log.warn("An Authorization exception happened: {}", response.message());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
 
     /**
      * Handles situations when any other errors in da app occur.
@@ -59,11 +56,9 @@ public class ErrorController {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleServerError(Exception exception) {
-        String message = exception.getLocalizedMessage();
-        log.warn("A Serverside Error '{}' happened: {}", exception.getClass().getSimpleName(), message);
-        return new ResponseEntity<>(
-                new ErrorDto(message),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorDto response = new ErrorDto(exception);
+        log.warn("A Serverside Error '{}' happened: {}", exception.getClass().getSimpleName(), response.message());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

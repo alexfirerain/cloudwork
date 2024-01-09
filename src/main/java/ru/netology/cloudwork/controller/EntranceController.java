@@ -1,6 +1,7 @@
 package ru.netology.cloudwork.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,21 +14,13 @@ import ru.netology.cloudwork.service.CloudworkAuthorizationService;
  */
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class EntranceController {
 
     /**
      * A service for managing users sessions.
      */
     private final CloudworkAuthorizationService authorizationService;
-
-    /**
-     * Creates a new {@link EntranceController} linked with an instance of {@link CloudworkAuthorizationService}
-     * to address when defining user's rights to enter or not.
-     * @param authorizationService a {@link CloudworkAuthorizationService}.
-     */
-    public EntranceController(CloudworkAuthorizationService authorizationService) {
-        this.authorizationService = authorizationService;
-    }
 
     /**
      * This controller method handles a POST request to "/login" endpoint.
@@ -41,7 +34,7 @@ public class EntranceController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        log.debug("Request to log in as '{}'", loginRequest.getLogin());
+        log.debug("Request to log in as '{}'", loginRequest.login());
         LoginResponse tokenOffer = authorizationService.initializeSession(loginRequest);
         log.trace("Controller returns {}", tokenOffer);
         return ResponseEntity.ok(tokenOffer);

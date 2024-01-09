@@ -15,8 +15,15 @@ import ru.netology.cloudwork.service.CloudworkAuthorizationService;
 
 import java.io.IOException;
 
+/**
+ * A filter looking through the requests whether they contain
+ * a proper token in a special header. If the request really
+ * holds a token being assigned to some user, this gets authenticated
+ * for him or her. Otherwise, rejects the request.
+ */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
     /**
@@ -32,10 +39,6 @@ public class TokenFilter extends OncePerRequestFilter {
     private static String TOKEN_PREFIX;
 
     private final CloudworkAuthorizationService authorizationService;
-
-    public TokenFilter(CloudworkAuthorizationService authorizationService) {
-        this.authorizationService = authorizationService;
-    }
 
     @Autowired
     public void setTokenHeader(@Qualifier("header") String tokenHeader) {

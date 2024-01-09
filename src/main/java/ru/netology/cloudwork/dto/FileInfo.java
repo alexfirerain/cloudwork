@@ -1,25 +1,18 @@
 package ru.netology.cloudwork.dto;
 
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * A presentation of file's name and size
  * to be transferred in a DTO letter.
  */
-@Getter
-@AllArgsConstructor
-public class FileInfo {
-    private String filename;
-    @PositiveOrZero
-    private long size;
-
+public record FileInfo(String filename, @PositiveOrZero Long size) {
     /**
-     * A static factory method to have the object ctreated
-     * based on two-object array supplied by the DB result set.
-     * @param inputData an array of two object, implying the first is string of name, the second long of size.
-     * @return  a new populated FileInfo object describing a file entity in the base.
+     * A static factory method to have the object created
+     * based on two-object array supplied in the result set from DB.
+     *
+     * @param inputData an array of two object, implying the first is string for name, the second is long for size.
+     * @return a new populated FileInfo object representing a file entity from the base.
      */
     public static FileInfo fromObjectArray(Object[] inputData) {
         if (inputData.length != 2)

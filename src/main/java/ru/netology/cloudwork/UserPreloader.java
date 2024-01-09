@@ -33,10 +33,8 @@ public class UserPreloader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        if (users == null) return;
         users.stream()
                 .filter(x -> !userManager.purgeSession(x.getUsername()))
                 .forEach(userManager::putUser);
-
     }
 }

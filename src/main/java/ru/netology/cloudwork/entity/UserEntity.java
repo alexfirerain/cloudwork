@@ -3,11 +3,9 @@ package ru.netology.cloudwork.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.netology.cloudwork.dto.FileInfo;
 import ru.netology.cloudwork.model.Role;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 

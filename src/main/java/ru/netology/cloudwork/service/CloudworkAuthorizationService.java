@@ -1,6 +1,5 @@
 package ru.netology.cloudwork.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,9 +16,10 @@ import org.springframework.stereotype.Service;
 import ru.netology.cloudwork.dto.LoginRequest;
 import ru.netology.cloudwork.dto.LoginResponse;
 import ru.netology.cloudwork.model.CloudworkAuthorization;
-import ru.netology.cloudwork.model.UserInfo;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A manager for user tokens and sessions. Also a custom {@link AuthenticationManager
@@ -27,7 +27,6 @@ import java.util.Date;
  */
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class CloudworkAuthorizationService implements AuthenticationManager {
 
     /**
@@ -39,6 +38,14 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      * implementation in the CloudWork.
      */
     private final UserManager userManager;
+
+    private static final Map<String, UserDetails> ACTIVE_TOKENS = new ConcurrentHashMap<>();
+
+    public CloudworkAuthorizationService(PasswordEncoder encoder, UserManager userManager) {
+        this.encoder = encoder;
+        this.userManager = userManager;
+        ACTIVE_TOKENS.putAll(userManager.getActiveSessions());
+    }
 
     /**
      * Tries to open user session by verifying the username and password,
@@ -54,10 +61,10 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      * @throws BadCredentialsException   if known password for that login doesn't match the one provided.
      */
     public LoginResponse initializeSession(LoginRequest loginRequest) {
-        String usernameRequested = loginRequest.getLogin();
+        String usernameRequested = loginRequest.login();
         log.trace("Logging {} in", usernameRequested);
         UserDetails user = userManager.loadUserByUsername(usernameRequested);
-        if (!encoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        if (!encoder.matches(loginRequest.password(), user.getPassword())) {
             log.trace("Password provided makes no match");
             throw new BadCredentialsException("Неверный пароль.");
         }
@@ -66,15 +73,26 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
             token = generateTokenFor(user);
             log.debug("Token '{}' generated for '{}'. A session established...", token, usernameRequested);
             userManager.setToken(usernameRequested, token);
+            ACTIVE_TOKENS.put(token, user);
+            log.info("CloudWork session for user '{}' started.", usernameRequested);
         } else {
             log.debug("User '{}' has already been logged in with '{}'. Joining the session...", usernameRequested, token);
+            log.info("CloudWork session for user '{}' continued.", usernameRequested);
         }
-        log.info("CloudWork session for user '{}' started.", usernameRequested);
         return new LoginResponse(token);
     }
 
+
+    /**
+     * Authenticates a user by token, retrieving the user information from the user manager
+     * using the provided token. Then, if found, the user gets authenticated and the
+     * authentication information is stored against the SecurityContextHolder.
+     *
+     * @param token a token string supplied by the request to be authenticated.
+     * @throws BadCredentialsException if associated user not found for the token.
+     */
     public void authenticateByToken(String token) {
-        UserInfo user = userManager.findUserByToken(token);
+        UserDetails user = ACTIVE_TOKENS.get(token);
         if (user == null) {
             log.warn("No mapped user for the token");
             throw new BadCredentialsException("Сеанс пользователя завершён.");
@@ -91,11 +109,15 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      * @param username a user whose token to be nullified.
      */
     public void terminateSession(String username) {
-        log.debug("Terminating {} session", username);
-        if (userManager.purgeSession(username))
-            log.info("Session for '{}' terminated", username);
-        else
-            log.debug("User '{}' not found", username);
+        String token = userManager.findTokenByUsername(username);
+        if (token != null) {
+            log.trace("Terminating {} session", username);
+            ACTIVE_TOKENS.remove(token);
+            userManager.purgeSession(username);
+            log.debug("Session for '{}' terminated", username);
+        } else {
+            log.warn("User '{}' has no session to be terminated", username);
+        }
     }
 
     /**

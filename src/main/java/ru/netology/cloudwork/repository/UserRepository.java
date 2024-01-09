@@ -9,8 +9,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.netology.cloudwork.entity.UserEntity;
 
+import java.util.List;
 import java.util.Optional;
 
+/**
+ * Performs all the requests and operation related to the users
+ * stored in the DB. If methods not self-descriptive, they are
+ * defined with HQL queries.
+ */
 @Repository
 @Transactional
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
@@ -32,7 +38,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByAccessToken(String accessToken);
 
     /**
-     * Writs new token (or {@code null}) as assigned to the user.
+     * Writs new token (or {@code null} if nullifying session) as assigned to the user.
      * @param username  the user the token is getting mapped to.
      * @param token     the token being mapped to the user.
      */
@@ -47,4 +53,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      */
     boolean existsByUsername(@NotNull @Param("username") String username);
 
+    @Query(value = "SELECT username, access_token FROM users " +
+            "WHERE access_token IS NOT NULL", nativeQuery = true)
+    List<Object[]> getActiveSessions();
 }

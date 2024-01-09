@@ -86,7 +86,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      */
     @Query(value = "SELECT file_name, size FROM files " +
             "WHERE owner_user_id = (SELECT user_id FROM users WHERE username =:username) " +
-            "ORDER BY upload_date DESC LIMIT :limit",
+            "ORDER BY update_date DESC LIMIT :limit",
             nativeQuery = true)
     List<Object[]> listFiles(@Param("username") String username, @Param("limit") int limit);
 

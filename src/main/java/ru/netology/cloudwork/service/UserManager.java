@@ -12,6 +12,9 @@ import ru.netology.cloudwork.entity.UserEntity;
 import ru.netology.cloudwork.model.UserInfo;
 import ru.netology.cloudwork.repository.UserRepository;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * A service for managing and getting user information
  * such as assigned tokens for CloudWork sessions and {@link UserDetails}.
@@ -75,9 +78,9 @@ public class UserManager implements UserDetailsService {
      *
      * @param token token to be identified as a mark of user session.
      * @return a UserDetail-featured object for the user mapped to the token
-     * or {@code null} if the token is null or not found in the DB.
+     * or {@code null} if the token is null or not found in the DB as user's active one.
      */
-    public UserInfo findUserByToken(String token) {
+    public UserDetails findUserByToken(String token) {
         return token == null ? null :
                 userRepository
                         .findByAccessToken(token)
@@ -110,6 +113,7 @@ public class UserManager implements UserDetailsService {
 
     /**
      * Sets token corresponding to the user to null.
+     * If user doesn't exist, does nothing and returns {@code false}
      *
      * @param username the user whose session to be nullified.
      * @return {@code false} if no user with the given name in DB,
@@ -131,7 +135,20 @@ public class UserManager implements UserDetailsService {
     public UserEntity getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("Пользователь %s не зарегистрирован."
+                        new UsernameNotFoundException("Пользователь '%s' не зарегистрирован."
                                 .formatted(username)));
+    }
+
+    /**
+     * Creates and returns mapping between currently active tokens and users.
+     * @return  a map where keys are tokens and values are corresponding UserInfo objects.
+     */
+    public Map<String, UserDetails> getActiveSessions() {
+        return userRepository
+                .getActiveSessions().stream()
+                .collect(Collectors
+                        .toMap(objects -> (String) objects[1],
+                                objects -> loadUserByUsername((String) objects[0]),
+                                (a, b) -> b));
     }
 }

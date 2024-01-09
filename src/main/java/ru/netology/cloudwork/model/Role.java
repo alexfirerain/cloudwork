@@ -12,7 +12,6 @@ public enum Role implements GrantedAuthority {
     USER,
     SUPERUSER;
 
-
     /**
      * This <code>GrantedAuthority</code> can be represented as a <code>String</code>
      * so this method returns a <code>String</code> equal to the name of the role.

@@ -45,7 +45,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             response.setCharacterEncoding("UTF-8");
 
             ErrorDto errorResponse = new ErrorDto(e);
-            log.info("ExceptionHandlerFilter crafted error response: {} (code {})",
+            log.info("A kind of security error occurred: {} (code {})",
                     errorResponse,
                     response.getStatus());
 

@@ -1,22 +1,12 @@
 package ru.netology.cloudwork.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The error response used across the CloudWork.
  * Each error message gets numbered with all-through id.
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class ErrorDto implements Serializable {
-    private String message;
-    private int id;
+public record ErrorDto(String message, int id) {
 
     /**
      * An all-through numerator of errors in da app.
@@ -35,15 +25,14 @@ public class ErrorDto implements Serializable {
     }
 
     public ErrorDto(String message) {
-        this.message = message;
-        id = idCount.getAndIncrement();
+        this(message, idCount.getAndIncrement());
     }
 
     /**
      * Creates ErrorDto based on caught exception's message.
      * @param cause the exception being wrapped.
      */
-    public ErrorDto(Exception cause) {
+    public ErrorDto(Throwable cause) {
         this(cause.getLocalizedMessage());
     }
 
