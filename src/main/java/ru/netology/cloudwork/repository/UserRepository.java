@@ -31,13 +31,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<String> findTokenByUsername(@NotNull @Param("username") String username);
 
     /**
-     * Finds and returns the {@link UserEntity} by its current session token.
-     * @param accessToken a string being used as an identifying token.
-     * @return  an optional with the UserEntity found, empty one if none.
-     */
-    Optional<UserEntity> findByAccessToken(String accessToken);
-
-    /**
      * Writs new token (or {@code null} if nullifying session) as assigned to the user.
      * @param username  the user the token is getting mapped to.
      * @param token     the token being mapped to the user.
@@ -53,6 +46,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      */
     boolean existsByUsername(@NotNull @Param("username") String username);
 
+    /**
+     * Gives a report of all users currently having non-null token,
+     * that is active users and their mapped tokens.
+     * @return list of objects pairs per active user
+     * each containing the username and the token mapped.
+     */
     @Query(value = "SELECT username, access_token FROM users " +
             "WHERE access_token IS NOT NULL", nativeQuery = true)
     List<Object[]> getActiveSessions();

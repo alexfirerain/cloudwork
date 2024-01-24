@@ -1,5 +1,7 @@
 package ru.netology.cloudwork.service;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * AuthenticationManager} implementation in the CloudWork.
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class CloudworkAuthorizationService implements AuthenticationManager {
 
@@ -39,11 +42,20 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      */
     private final UserManager userManager;
 
+    /**
+     * In-memory representation of active token-user mappings
+     * for quicker response on requests.
+     */
     private static final Map<String, UserDetails> ACTIVE_TOKENS = new ConcurrentHashMap<>();
 
-    public CloudworkAuthorizationService(PasswordEncoder encoder, UserManager userManager) {
-        this.encoder = encoder;
-        this.userManager = userManager;
+
+    /**
+     * On bean's creation loads into memory active sessions
+     * as supplied by the current state of the DB.
+     * It sets the Service in state of being ready to serve.
+     */
+    @PostConstruct
+    public void initializeMap() {
         ACTIVE_TOKENS.putAll(userManager.getActiveSessions());
     }
 
@@ -89,7 +101,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      * authentication information is stored against the SecurityContextHolder.
      *
      * @param token a token string supplied by the request to be authenticated.
-     * @throws BadCredentialsException if associated user not found for the token.
+     * @throws BadCredentialsException if there's no mapped user for such a token.
      */
     public void authenticateByToken(String token) {
         UserDetails user = ACTIVE_TOKENS.get(token);
