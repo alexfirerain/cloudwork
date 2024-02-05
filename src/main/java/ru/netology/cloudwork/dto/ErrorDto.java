@@ -24,6 +24,10 @@ public record ErrorDto(String message, int id) {
         idCount.set(count);
     }
 
+    /**
+     * Tailors new DTO from the message to be wrapped and sent.
+     * @param message the message in question.
+     */
     public ErrorDto(String message) {
         this(message, idCount.getAndIncrement());
     }

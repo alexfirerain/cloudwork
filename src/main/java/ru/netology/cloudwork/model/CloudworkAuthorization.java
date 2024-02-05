@@ -11,11 +11,17 @@ import java.util.stream.Collectors;
 /**
  * The implementation of {@link Authentication}, a representation of
  * user's state of being authenticated against the CloudWorkToken model.
- * It holds the username & password from the corresponding user-entity
+ * It holds the username and password from the corresponding user-entity
  * along with its set of roles, and it can be authenticated or not.
  */
 public class CloudworkAuthorization implements Authentication {
+    /**
+     * Username for authorization.
+     */
     private final String username;
+    /**
+     * Password to authorize the user.
+     */
     private final String password;
     private boolean authenticated;
     private final Set<Role> authorities;

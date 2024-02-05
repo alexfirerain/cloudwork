@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A manager for user tokens and sessions. Also a custom {@link AuthenticationManager
  * AuthenticationManager} implementation in the CloudWork.
+ * It harbours also a map of active tokens
+ * mapped to currently logged-in users for quicker response.
  */
 @Service
 @RequiredArgsConstructor
@@ -64,8 +66,6 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      * then generates a token for the newcomer and returns it,
      * or uses the existing token
      * if the user has already been logged and did not exit.
-     * Current realization of user-preloading however purges tokens
-     * when the application starts.
      *
      * @param loginRequest a DTO containing login information.
      * @return a DTO with token for user to use.
