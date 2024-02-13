@@ -19,8 +19,18 @@ import ru.netology.cloudwork.service.CloudworkAuthorizationService;
 @Slf4j
 public class CloudworkLogoutHandler implements LogoutHandler {
 
+    /**
+     * A server for authorization in CloudWork.
+     */
     private final CloudworkAuthorizationService authorizationService;
 
+    /**
+     * The proper routine of the handler.
+     * It triggers the authentication server to close a session and sets a response status to OK.
+     * @param request the HTTP request.
+     * @param response the HTTP response.
+     * @param authentication the current principal details.
+     */
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String user = authentication.getName();

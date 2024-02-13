@@ -28,7 +28,13 @@ import java.util.List;
 @Transactional
 public class FileService {
 
+    /**
+     * A JPA-compatible storage for files.
+     */
     private final FileRepository fileRepository;
+    /**
+     * A source of user-related data required in files' storing.
+     */
     private final UserManager userManager;
 
     /**

@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A manager for user tokens and sessions. Also a custom {@link AuthenticationManager
+ * A manager for user tokens and sessions, also a custom {@link AuthenticationManager
  * AuthenticationManager} implementation in the CloudWork.
- * It harbours also a map of active tokens
- * mapped to currently logged-in users for quicker response.
+ * It also maintains an in-memory map of active tokens and their associated
+ * currently logged-in users for quicker response.
  */
 @Service
 @RequiredArgsConstructor
@@ -46,9 +46,10 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
 
     /**
      * In-memory representation of active token-user mappings
-     * for quicker response on requests.
+     * which allows the CloudworkAuthorizationService
+     * to quickly authenticate users without having to query the database each time.
      */
-    private static final Map<String, UserDetails> ACTIVE_TOKENS = new ConcurrentHashMap<>();
+    private static final Map<String, UserDetails> SESSIONS = new ConcurrentHashMap<>();
 
 
     /**
@@ -58,7 +59,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      */
     @PostConstruct
     public void initializeMap() {
-        ACTIVE_TOKENS.putAll(userManager.getActiveSessions());
+        SESSIONS.putAll(userManager.getActiveSessions());
     }
 
     /**
@@ -85,7 +86,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
             token = generateTokenFor(user);
             log.debug("Token '{}' generated for '{}'. A session established...", token, usernameRequested);
             userManager.setToken(usernameRequested, token);
-            ACTIVE_TOKENS.put(token, user);
+            SESSIONS.put(token, user);
             log.info("CloudWork session for user '{}' started.", usernameRequested);
         } else {
             log.debug("User '{}' has already been logged in with '{}'. Joining the session...", usernameRequested, token);
@@ -104,7 +105,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
      * @throws BadCredentialsException if there's no mapped user for such a token.
      */
     public void authenticateByToken(String token) {
-        UserDetails user = ACTIVE_TOKENS.get(token);
+        UserDetails user = SESSIONS.get(token);
         if (user == null) {
             log.warn("No mapped user for the token");
             throw new BadCredentialsException("Сеанс пользователя завершён.");
@@ -124,7 +125,7 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
         String token = userManager.findTokenByUsername(username);
         if (token != null) {
             log.trace("Terminating {} session", username);
-            ACTIVE_TOKENS.remove(token);
+            SESSIONS.remove(token);
             userManager.purgeSession(username);
             log.debug("Session for '{}' terminated", username);
         } else {

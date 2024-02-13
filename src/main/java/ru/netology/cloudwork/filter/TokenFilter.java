@@ -38,14 +38,27 @@ public class TokenFilter extends OncePerRequestFilter {
      */
     private static String TOKEN_PREFIX;
 
+    /**
+     * A server for authorization in CloudWork.
+     */
     private final CloudworkAuthorizationService authorizationService;
 
+    /**
+     * An initializer for a static value of header's name
+     * that carries token for request's authorization.
+     * @param tokenHeader a header's name.
+     */
     @Autowired
     public void setTokenHeader(@Qualifier("header") String tokenHeader) {
         TOKEN_HEADER = tokenHeader;
         log.debug("Authentication header set as '{}'", TOKEN_HEADER);
     }
 
+    /**
+     * An initializer for a static value of prefix
+     * that the authorization token starts with.
+     * @param tokenPrefix a token value's prefix.
+     */
     @Autowired
     public void setTokenPrefix(@Qualifier("prefix") String tokenPrefix) {
         TOKEN_PREFIX = tokenPrefix;
@@ -53,7 +66,8 @@ public class TokenFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Looks through incoming requests for tokens in their {@link #TOKEN_HEADER}.
+     * The proper routine of the filter. It looks through incoming requests
+     * for tokens in their {@link #TOKEN_HEADER}.
      * When it finds no token, bypasses the request.
      * When does, validates it and sets the linked user authenticated to this request-thread.
      *
