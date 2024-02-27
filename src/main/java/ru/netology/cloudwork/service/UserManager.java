@@ -76,7 +76,7 @@ public class UserManager implements UserDetailsService {
      *
      * @param username the user in question.
      * @return the string that is user's token, including {@code null}
-     * both if it is null or specified user is absent.
+     * both if the token is null or specified user is absent from DB.
      * @throws IllegalArgumentException if a given user is null.
      */
     public String findTokenByUsername(@NotNull String username) {
