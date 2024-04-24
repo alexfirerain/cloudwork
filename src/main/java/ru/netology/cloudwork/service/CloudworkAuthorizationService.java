@@ -97,9 +97,9 @@ public class CloudworkAuthorizationService implements AuthenticationManager {
 
 
     /**
-     * Authenticates a user by token, retrieving the user information from the user manager
-     * using the provided token. Then, if found, the user gets authenticated and the
-     * authentication information is stored against the SecurityContextHolder.
+     * Authenticates a user by token, retrieving the user information from in-memory map.
+     * Then, if found, the user gets authenticated and the authentication information
+     * is stored against the SecurityContextHolder.
      *
      * @param token a token string supplied by the request to be authenticated.
      * @throws BadCredentialsException if there's no mapped user for such a token.

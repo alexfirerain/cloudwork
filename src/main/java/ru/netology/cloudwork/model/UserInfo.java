@@ -89,8 +89,6 @@ public class UserInfo implements UserDetails {
 
     @Override
     public String toString() {
-        return "UserInfo{" +
-                "username='" + username + '\'' +
-                '}';
+        return "UserInfo{username='%s'}".formatted(username);
     }
 }

@@ -12,6 +12,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * The additional beans and required constants
+ * for the CloudWork to work.
+ */
 @Configuration
 public class AuxiliaryComponents {
     /**
@@ -24,7 +28,7 @@ public class AuxiliaryComponents {
      * The methods that the application expects to receive from the front.
      */
     private final String[] methods = { "POST", "GET", "PUT", "DELETE", "OPTIONS" };
-
+    
     /**
      * The name of header that a front-app will be sending a token in.
      */

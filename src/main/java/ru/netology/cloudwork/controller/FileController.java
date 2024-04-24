@@ -41,7 +41,7 @@ public class FileController {
     public ResponseEntity<List<FileInfo>> listFiles(Principal principal,
                                                     @RequestParam(name = "limit", defaultValue = "5") int limit) {
         String client = principal.getName();    // there was still smarter way of doing this
-        log.debug("Requested listing {} files for {}.", limit, client);  // TODO: систематизировать уровни представления
+        log.debug("Requested listing {} files for {}.", limit, client);
         return fileService.listFiles(client, limit);
     }
 
@@ -85,7 +85,7 @@ public class FileController {
         return fileService.deleteFile(client, filename);
     }
 
-    /**
+     /**
      * An endpoint to handle a GET request to acquire a file down.
      * The method takes in a name of file to get, obtains a username from a security context
      * and passes these parameters to a method of {@link #fileService},

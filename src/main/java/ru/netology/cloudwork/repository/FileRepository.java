@@ -81,7 +81,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
      * @return  a list of arrays of objects, each array containing
       * (String) filename and (Integer) size values,
       * that correspond to properties of a {@link FileInfo} DTO, describing each
-      * file it the list which is restricted with a limit
+      * file in the list which is restricted with a limit
       * and ordered by upload date from the newest.
      */
     @Query(value = "SELECT file_name, size FROM files " +
